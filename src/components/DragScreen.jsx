@@ -33,15 +33,10 @@ export default class DragScreen extends Component {
     console.log("plate clicked");
     
   }
-
-  onCellClickedhandler(event, id){
-   
-  }
   
   createCell(obj){
     return <Cell num = {obj.id} x = {obj.xPos} y = {obj.yPos} color = {obj.color} shape = {obj.shape} onClickCell = {
       () => {
-            
                 console.log("it work as id : " + obj.id);
                 var temp = this.state.cellList;
                 for (var i = 0 ; i < temp.length ; i++){

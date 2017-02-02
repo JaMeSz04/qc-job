@@ -1,0 +1,11 @@
+.square {
+	width: 100px;
+    height : 100px;
+	
+}
+
+
+#front {
+    position:fixed;
+    z-index: 10;
+}

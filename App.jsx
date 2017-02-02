@@ -1,10 +1,11 @@
 import React from 'react';
+import DragScreen from './src/components/DragScreen.jsx';
 
 class App extends React.Component {
    render() {
       return (
          <div>
-            Hello World!!!
+            <DragScreen/>
          </div>
       );
    }

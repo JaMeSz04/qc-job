@@ -1,34 +1,56 @@
 import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
+import Plate from './Plate.jsx';
 
 export default class DragScreen extends Component {
   constructor(props, context) {
     super(props, context);
     this.Viewer = null;
+    this.handleOnClick = this.handleOnClick.bind(this);
   }
+
   componentDidMount() {
     this.Viewer.fitToViewer();
   }
+
+  handleOnClick(event){
+    console.log("clicked");
+    console.log(event.x);
+    console.log(event.y);
+  }
+  
   render() {
+    
     return (
-      <div>
-        <button onClick={event => this.Viewer.zoomOnViewerCenter(1.1)}>Zoom in</button>
-        <button onClick={event => this.Viewer.fitSelection(40, 40, 200, 200)}>Zoom area</button>
-        <button onClick={event => this.Viewer.fitToViewer()}>Fit</button>
 
-        <hr/>
-
-        <ReactSVGPanZoom
+        <ReactSVGPanZoom 
+          background = {"#FFF"}
           style={{outline: "1px solid black"}}
-          width={window.innerWidth} height={window.innerHeight} ref={Viewer => this.Viewer = Viewer}
-          onClick={event => console.log('click', event.x, event.y, event.originalEvent)}
-          onMouseMove={event => console.log('move', event.x, event.y)} >
+          width={screen.width - 20} height={screen.height - 300} ref={Viewer => this.Viewer = Viewer}
+          onClick={(event) => this.handleOnClick(event)}
+          SVGBackground = {"#FFF"}
+          tool = {"auto"}>
+            <svg width={900} height={800}>
+                <Cell/>
+            </svg>
 
-          <svg width={900} height={800}>
-                <div>Hello world</div>
-          </svg>
         </ReactSVGPanZoom>
-      </div>
+        
+    );
+  }
+}
+
+
+class Cell extends Component {
+
+  render(){
+    var color = {
+      background : this.props.color
+    };
+    return(
+      <foreignObject x= {this.props.x} y= {this.props.y} width= {100} height= {100}>
+          <div style = {color} className = "square">I'm a div in an svg</div>
+      </foreignObject>
     );
   }
 }

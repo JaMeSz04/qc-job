@@ -19,5 +19,6 @@
     "start": "webpack-dev-server --hot --inline"
   },
   "author": "",
+  
   "license": "ISC"
 }

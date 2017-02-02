@@ -7,6 +7,7 @@ export default class DragScreen extends Component {
     super(props, context);
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
+    this.onCellClickedhandler = this.onCellClickedhandler.bind(this);
   }
 
   componentDidMount() {
@@ -14,15 +15,17 @@ export default class DragScreen extends Component {
   }
 
   handleOnClick(event){
-    console.log("clicked");
-    console.log(event.x);
-    console.log(event.y);
+    console.log(" kuy clicked");
+    
+  }
+
+  onCellClickedhandler(){
+    alert("it worked");
   }
   
   render() {
     
     return (
-
         <ReactSVGPanZoom 
           background = {"#FFF"}
           style={{outline: "1px solid black"}}
@@ -31,7 +34,7 @@ export default class DragScreen extends Component {
           SVGBackground = {"#FFF"}
           tool = {"auto"}>
             <svg width={900} height={800}>
-                <Cell/>
+                <Cell x = {40} y = {40} color = "gray" hehe = { this.onCellClickedhandler }/>
             </svg>
 
         </ReactSVGPanZoom>
@@ -47,9 +50,10 @@ class Cell extends Component {
     var color = {
       background : this.props.color
     };
+
     return(
-      <foreignObject x= {this.props.x} y= {this.props.y} width= {100} height= {100}>
-          <div style = {color} className = "square">I'm a div in an svg</div>
+      <foreignObject x= {this.props.x} y= {this.props.y} width= {100} height= {100} >
+          <div style = {color} className = "square" onClick={ (event) => { this.props.hehe }}>I'm a div in an svg</div>
       </foreignObject>
     );
   }

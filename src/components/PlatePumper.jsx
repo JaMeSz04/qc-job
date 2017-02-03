@@ -1,13 +1,13 @@
 import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Plate from './Plate.jsx';
-import Cell from './Cell.jsx';
 
 export default class DragScreen extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
       cellList : [ ],
+      
       selectedColor : "red",
       defaultColor : "gray"
     };
@@ -16,14 +16,7 @@ export default class DragScreen extends Component {
     
     this.createCell = this.createCell.bind(this);
 
-    var dummy = this.state.cellList;
-    var counter = 0;
-    for (var i = 0; i < (screen.height - 400); i += 101){
-      for (var j = 0 ; j < (screen.width - 20) ; j+= 101){
-        dummy.push( { id : counter , shape : this.props.shape, xPos : j, yPos : i, color : "gray"} );
-        counter++;
-      }
-    }
+   
   }
 
   componentDidMount() {
@@ -56,7 +49,6 @@ export default class DragScreen extends Component {
  
   render() {
 
-    const renderCell = this.state.cellList.map( (obj) => this.createCell(obj));
     console.log(renderCell);
     return (
         <ReactSVGPanZoom
@@ -67,12 +59,9 @@ export default class DragScreen extends Component {
           SVGBackground = {"#D3D3D3"}
           tool = {"auto"}>
             <svg width={900} height={800}>
-                {renderCell}    
+
             </svg>
         </ReactSVGPanZoom>      
     );
   }
 }
-
-
-

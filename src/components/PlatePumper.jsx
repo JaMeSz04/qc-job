@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
+import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl} from 'react-bootstrap';
+
 
 export default class PlatePumper extends Component {
   constructor(props, context) {
@@ -9,7 +11,9 @@ export default class PlatePumper extends Component {
       cellList : [ ],
       selectedColor : "red",
       defaultColor : "gray",
-      size : 0
+      size : 0,
+      saveShow : false,
+      saveClose : false
     };
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
@@ -23,8 +27,8 @@ export default class PlatePumper extends Component {
   handleOnClick(event){
     console.log("plate clicked");
     var temp = this.state.cellList;
-    var newX = (event.x - (event.x % 100)) + 1;
-    var newY = (event.y - (event.y % 100)) + 1;
+    var newX = (event.x - (event.x % 60)) + 1;
+    var newY = (event.y - (event.y % 60)) + 1;
     var contained = false;
     for (var i = 0 ; i < temp.length; i++){
         if (temp[i].xPos == newX && temp[i].yPos == newY){
@@ -64,18 +68,64 @@ export default class PlatePumper extends Component {
   render() {
 
     const renderCell = this.state.cellList.map( (obj) => this.createCell(obj));
+    let saveClose = () => {
+        
+        this.setState({ saveShow: false })
+    };
+    let cancelClose = () => this.setState({ cancelShow: false });
+
     return (
-        <ReactSVGPanZoom
-          background = {"#D3D3D3"}
-          style={{outline: "1px solid black"}}
-          width={screen.width - 15} height={screen.height - 400} ref={Viewer => this.Viewer = Viewer}
-          onClick={(event) => this.handleOnClick(event)}
-          SVGBackground = {"#D3D3D3"}
-          tool = {"auto"}>
-            <svg width={screen.width - 15} height={screen.height - 400}>
-                {renderCell}    
-            </svg>
-        </ReactSVGPanZoom>      
+            <Row>
+                <Row style = {{marginLeft: "3vh"}}>
+                    <ReactSVGPanZoom
+                    background = {"#D3D3D3"}
+                    style={{outline: "1px solid black", marginTop : "1vh"}}
+                    width={screen.width - 15} height={screen.height - 400} ref={Viewer => this.Viewer = Viewer}
+                    onClick={(event) => this.handleOnClick(event)}
+                    SVGBackground = {"#D3D3D3"}
+                    tool = {"auto"}>
+                        <svg width={screen.width - 15} height={screen.height - 400}>
+                            {renderCell}  
+                        </svg>
+                    </ReactSVGPanZoom> 
+                </Row>
+                <Row style = {{marginLeft : "3vh", marginTop : "3vh", marginRight : "1vh"}}>
+                    <Col md = {6}>
+                        
+                    </Col>
+                    <Col md = {3}>
+                        <Button block bsStyle = "warning" bsSize = "large" > Cancel </Button>
+                    </Col>
+                    <Col md ={3}>
+                        <Button block bsStyle = "primary" bsSize = "large" onClick={ () => this.setState({ saveShow: true })}> Save </Button>
+                    </Col>
+                </Row>
+                <SaveModal show={this.state.saveShow} onHide={saveClose} />
+            </Row>
     );
   }
+}
+
+
+
+class SaveModal extends Component {
+    render(){
+        return(
+            <Modal {...this.props} bsSize="small" aria-labelledby="contained-modal-title-sm">
+                <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-sm">Set Pattern Name</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                        <FormControl
+                            type="text"
+                            placeholder="Pattern name"
+                            onChange={this.handleChange}
+                        />
+                </Modal.Body>
+                <Modal.Footer>
+                <Button onClick={this.props.onHide}>Close</Button>
+                </Modal.Footer>
+            </Modal>
+        );
+    }
 }

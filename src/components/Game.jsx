@@ -7,15 +7,19 @@ export default class Game extends Component {
     constructor(props){
         super(props);
         this.state = {
-            selectedColor : "red"
-        }
+            selectedColor : "red",
+            minute : this.props.min,
+            second : 0
+        }  
     }
+
     render(){
         var div = {
             background : this.state.selectedColor,
             width: "50%",
             margin: "0 auto"
         };
+        var time = toString(this.state.minute) + " minutes " + toString(this.state.second) + " seconds ";
         return (
             <div class = "container">
                 <Row style = {{marginLeft : "0.5vh", marginTop : "1vh"}}>
@@ -26,7 +30,7 @@ export default class Game extends Component {
                         <Row style = {{ marginLeft : "1vh" ,marginRight : "3vh"}}>
                             <Row >
                                 <Panel header = "Time Remaining">
-                                    <h3 style = {{ textAlign : "center" }}> 2 Minutes 50 Seconds</h3>
+                                    <h3 style = {{ textAlign : "center" }}> {time} </h3>
                                 </Panel>
                             </Row>
                             <Row>
@@ -45,11 +49,9 @@ export default class Game extends Component {
 
                 </Row>
                 <Row>
-                    <Col md = {9}>
-                    </Col>
-                    <Col md = {3}>
-                        
-                    </Col>
+                    <Panel header = "Color Picker" style = {{marginLeft : "5vh" , marginRight : " 3vh", marginTop : "1vh"}}>
+                        <div className = "square" />
+                    </Panel>
                 </Row>
             </div>
         );

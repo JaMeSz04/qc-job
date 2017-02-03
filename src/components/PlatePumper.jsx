@@ -1,22 +1,19 @@
 import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
-import Plate from './Plate.jsx';
+import Cell from './Cell.jsx';
 
-export default class DragScreen extends Component {
+export default class PlatePumper extends Component {
   constructor(props, context) {
     super(props, context);
     this.state = {
       cellList : [ ],
-      
       selectedColor : "red",
-      defaultColor : "gray"
+      defaultColor : "gray",
+      size : 0
     };
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
-    
     this.createCell = this.createCell.bind(this);
-
-   
   }
 
   componentDidMount() {
@@ -25,6 +22,23 @@ export default class DragScreen extends Component {
 
   handleOnClick(event){
     console.log("plate clicked");
+    var temp = this.state.cellList;
+    var newX = (event.x - (event.x % 100)) + 1;
+    var newY = (event.y - (event.y % 100)) + 1;
+    var contained = false;
+    for (var i = 0 ; i < temp.length; i++){
+        if (temp[i].xPos == newX && temp[i].yPos == newY){
+            contained = true;
+            temp.splice(i, 1);
+        }
+    }
+    
+    if (!contained) {
+        temp.push( {id : this.state.size , color : "gray", xPos :  newX, yPos : newY, shape : "square" });
+        this.setState( { size : this.state.size + 1 } );
+        
+    }
+    this.forceUpdate();
     
   }
   
@@ -49,7 +63,7 @@ export default class DragScreen extends Component {
  
   render() {
 
-    console.log(renderCell);
+    const renderCell = this.state.cellList.map( (obj) => this.createCell(obj));
     return (
         <ReactSVGPanZoom
           background = {"#D3D3D3"}
@@ -58,8 +72,8 @@ export default class DragScreen extends Component {
           onClick={(event) => this.handleOnClick(event)}
           SVGBackground = {"#D3D3D3"}
           tool = {"auto"}>
-            <svg width={900} height={800}>
-
+            <svg width={screen.width - 15} height={screen.height - 400}>
+                {renderCell}    
             </svg>
         </ReactSVGPanZoom>      
     );

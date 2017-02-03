@@ -1,13 +1,14 @@
 import React from 'react';
-import DragScreen from './src/components/DragScreen.jsx';
+import Game from './src/components/Game.jsx';
 import PlatePumper from './src/components/PlatePumper.jsx';
 
 class App extends React.Component {
    render() {
-      const DragScreen = <DragScreen shape = "square"/>;
+      const Games = <Game shape = "square"/>;
+      const Plate = <PlatePumper/>;
       return (
          <div>
-            <PlatePumper/>
+            <Game/>
          </div>
       );
    }

@@ -62,11 +62,11 @@ export default class DragScreen extends Component {
         <ReactSVGPanZoom
           background = {"#D3D3D3"}
           style={{outline: "1px solid black"}}
-          width={screen.width - 15} height={screen.height - 400} ref={Viewer => this.Viewer = Viewer}
+          width={screen.width - 380} height={screen.height - 400} ref={Viewer => this.Viewer = Viewer}
           onClick={(event) => this.handleOnClick(event)}
           SVGBackground = {"#D3D3D3"}
           tool = {"auto"}>
-            <svg width={screen.width - 15} height={screen.height - 400}>
+            <svg width={screen.width - 380} height={screen.height - 400}>
                 {renderCell}    
             </svg>
         </ReactSVGPanZoom>      

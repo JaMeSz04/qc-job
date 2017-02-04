@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
+
 import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl} from 'react-bootstrap';
 
 
@@ -18,6 +19,8 @@ export default class PlatePumper extends Component {
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
     this.createCell = this.createCell.bind(this);
+    this.saveHandler = this.saveHandler.bind(this);
+
   }
 
   componentDidMount() {
@@ -64,15 +67,17 @@ export default class PlatePumper extends Component {
             }
     }  />;
   }
+
+  saveHandler(name){
+      
+  }
  
   render() {
 
     const renderCell = this.state.cellList.map( (obj) => this.createCell(obj));
-    let saveClose = () => {
-        
-        this.setState({ saveShow: false })
-    };
-    let cancelClose = () => this.setState({ cancelShow: false });
+    let saveClose = () => { this.setState({ saveShow: false }) }
+    let cancelClose = () => { this.setState({ cancelShow: false }) }
+    let handleSave = (name) => { db.addPattern(name, this.state.cellList); }
 
     return (
             <Row>
@@ -100,30 +105,35 @@ export default class PlatePumper extends Component {
                         <Button block bsStyle = "primary" bsSize = "large" onClick={ () => this.setState({ saveShow: true })}> Save </Button>
                     </Col>
                 </Row>
-                <SaveModal show={this.state.saveShow} onHide={saveClose} />
+                <SaveModal show={this.state.saveShow} onHide={saveClose} handleSave = {handleSave}/>
             </Row>
     );
   }
 }
 
-
-
 class SaveModal extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+            name : ""
+        }
+    }
     render(){
         return(
-            <Modal {...this.props} bsSize="small" aria-labelledby="contained-modal-title-sm">
+            <Modal {...this.props} bsSize = "small" aria-labelledby = "contained-modal-title-sm" >
                 <Modal.Header closeButton>
                 <Modal.Title id="contained-modal-title-sm">Set Pattern Name</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                        <FormControl
-                            type="text"
-                            placeholder="Pattern name"
-                            onChange={this.handleChange}
-                        />
+                    <FormControl
+                        type="text"
+                        placeholder="Pattern name"
+                        onChange={(text) => { this.setState( {name : text} ); }}
+                    />
                 </Modal.Body>
                 <Modal.Footer>
                 <Button onClick={this.props.onHide}>Close</Button>
+                <Button onClick={ () => this.props.handleSave(this.state.name) } bsStyle = "primary"> Save </Button>
                 </Modal.Footer>
             </Modal>
         );

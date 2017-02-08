@@ -25,9 +25,10 @@ export default class MainMenu extends Component{
                         <Button bsSize = "large" bsStyle = "primary" onClick = {lgOpen}>Test</Button>
                         <Button bsSize = "large" bsStyle = "primary" onClick = {otherOpen} >Others</Button>
                     </Row>
+                
+                    <SelectModal colorSelect = {['red','blue','green','brown']} show={this.state.lgShow} onHide={lgClose} />
+                    <LoginModal show = {this.state.otherShow} onHide = {otherClose}/>
                 </div>
-                <SelectModal colorSelect = {['red','blue','green','brown']} show={this.state.lgShow} onHide={lgClose} />
-                <LoginModal show = {this.state.otherShow} onHide = {otherClose}/>
             </div>
         );
     }

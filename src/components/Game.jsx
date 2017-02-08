@@ -11,6 +11,23 @@ export default class Game extends Component {
             minute : this.props.min,
             second : 0
         }  
+        
+    }
+
+    componentDidMount(){
+        setInterval( () => {
+            if (this.state.second == 0 && this.state.minute == 0){
+                this.setState( { second : 0 });
+                this.setState( { minute : 0 });
+            }
+            else if (this.state.second == 0){
+                this.setState( {second : 59} );
+                this.setState( {minute : this.state.minute - 1});
+            } 
+            else {
+                this.setState( { second : this.state.second - 1});
+            }
+        }, 1000);
     }
 
     render(){
@@ -19,7 +36,7 @@ export default class Game extends Component {
             width: "50%",
             margin: "0 auto"
         };
-        var time = toString(this.state.minute) + " minutes " + toString(this.state.second) + " seconds ";
+        var time = this.state.minute + " minutes " + this.state.second + " seconds ";
         return (
             <div class = "container">
                 <Row style = {{marginLeft : "0.5vh", marginTop : "1vh"}}>

@@ -9,7 +9,7 @@ class App extends React.Component {
       const Plate = <PlatePumper/>;
       return (
          <div>
-            <MainMenu/>
+            <Game shape = "square" min = {5}/>
          </div>
       );
    }

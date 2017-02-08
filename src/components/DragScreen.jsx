@@ -3,6 +3,7 @@ import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Plate from './Plate.jsx';
 import Cell from './Cell.jsx';
 
+
 export default class DragScreen extends Component {
   constructor(props, context) {
     super(props, context);
@@ -13,13 +14,12 @@ export default class DragScreen extends Component {
     };
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
-    
     this.createCell = this.createCell.bind(this);
 
     var dummy = this.state.cellList;
     var counter = 0;
-    for (var i = 0; i < (screen.height - 400); i += 101){
-      for (var j = 0 ; j < (screen.width - 20) ; j+= 101){
+    for (var i = 0; i < (screen.height - 400); i += 61){
+      for (var j = 0 ; j < (screen.width - 20) ; j+= 61){
         dummy.push( { id : counter , shape : this.props.shape, xPos : j, yPos : i, color : "gray"} );
         counter++;
       }

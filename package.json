@@ -12,8 +12,11 @@
     "react-bootstrap": "^0.30.7",
     "react-dom": "^15.4.2",
     "react-svg-pan-zoom": "^2.4.5",
+    "sqlite": "^2.3.0",
+    "sqlite3": "^3.1.8",
     "webpack": "^2.2.1",
-    "webpack-dev-server": "^1.16.3"
+    "webpack-dev-server": "^1.16.3",
+    "webpack-node-externals": "^1.5.4"
   },
   "devDependencies": {},
   "scripts": {

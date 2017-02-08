@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
-
 import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl} from 'react-bootstrap';
+
+
 
 
 export default class PlatePumper extends Component {
@@ -19,7 +20,7 @@ export default class PlatePumper extends Component {
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
     this.createCell = this.createCell.bind(this);
-    this.saveHandler = this.saveHandler.bind(this);
+    this.save = this.save.bind(this);
 
   }
 
@@ -68,8 +69,9 @@ export default class PlatePumper extends Component {
     }  />;
   }
 
-  saveHandler(name){
-      
+  save(name){
+      console.log("save");
+      console.log(name);
   }
  
   render() {
@@ -77,7 +79,7 @@ export default class PlatePumper extends Component {
     const renderCell = this.state.cellList.map( (obj) => this.createCell(obj));
     let saveClose = () => { this.setState({ saveShow: false }) }
     let cancelClose = () => { this.setState({ cancelShow: false }) }
-    let handleSave = (name) => { db.addPattern(name, this.state.cellList); }
+    
 
     return (
             <Row>
@@ -105,7 +107,7 @@ export default class PlatePumper extends Component {
                         <Button block bsStyle = "primary" bsSize = "large" onClick={ () => this.setState({ saveShow: true })}> Save </Button>
                     </Col>
                 </Row>
-                <SaveModal show={this.state.saveShow} onHide={saveClose} handleSave = {handleSave}/>
+                <SaveModal show={this.state.saveShow} onHide={saveClose} handleSave = { (name) => this.save(name) }/>
             </Row>
     );
   }
@@ -117,6 +119,10 @@ class SaveModal extends Component {
         this.state = {
             name : ""
         }
+        this.changeText = this.changeText.bind(this);
+    }
+    changeText(text){   
+        this.setState ( { name : text });
     }
     render(){
         return(
@@ -128,12 +134,12 @@ class SaveModal extends Component {
                     <FormControl
                         type="text"
                         placeholder="Pattern name"
-                        onChange={(text) => { this.setState( {name : text} ); }}
+                        onChange={(event) => { console.log (event.target.value); this.setState( { name : event.target.value});}}
                     />
                 </Modal.Body>
                 <Modal.Footer>
-                <Button onClick={this.props.onHide}>Close</Button>
-                <Button onClick={ () => this.props.handleSave(this.state.name) } bsStyle = "primary"> Save </Button>
+                    <Button onClick={this.props.onHide}>Close</Button>
+                    <Button onClick={()=>this.props.handleSave(this.state.name)} bsStyle = "primary"> Save </Button>
                 </Modal.Footer>
             </Modal>
         );

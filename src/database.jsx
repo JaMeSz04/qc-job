@@ -1,10 +1,8 @@
 var sqlite = require('sqlite3').verbose();
-var db = new sqlite.Database('qc-db.db');
+var db = new sqlite.Database('./qc-db.db');
 
-
-module.exports = {
-
- addPattern : function (name,cellList){
+export default class DB {
+    addPattern(name,cellList){
         var query = "INSERT INTO pattern_list(pattern_name) VALUES ('" + name + "')" ;
         db.run(query, function (error){
             if (error){
@@ -34,12 +32,6 @@ module.exports = {
                 }
             });
         }
-    },
-
-    
-
-};
-
-
-
+    }
+}
 

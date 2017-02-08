@@ -1,3 +1,5 @@
+
+
 var config = {
    entry: './main.js',
 	
@@ -10,7 +12,11 @@ var config = {
       inline: true,
       port: 8080
    },
-	
+   externals: {
+        // require("jquery") is external and available
+        //  on the global var jQuery
+        "sqlite3": "sqlite3"
+    },
    module: {
       loaders: [
          {

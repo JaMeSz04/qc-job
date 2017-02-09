@@ -1,13 +1,41 @@
 import React, {Component} from 'react';
 import {Row, Col, Button, Modal, DropdownButton, MenuItem, Form, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
+import axios from 'axios';
+
 
 export default class MainMenu extends Component{
     constructor(props){
         super(props);
         this.state = {
             lgShow: false,
-            otherShow : false
+            otherShow : false,
+            selectedPattern : "snake",
+            data : []
         }
+        
+        this.setState({ saveShow: false });
+        this.setNewData = this.setNewData.bind(this);
+        this.onStartHandler = this.onStartHandler.bind(this);
+
+    }
+    setNewData(nData){
+        console.log("set new data");
+        this.setState({ data : nData.data });
+    }
+    componentDidMount(){
+        var word = this.state.data;
+        axios.post('http://192.168.1.106:3616/getPattern', {
+            
+        })
+        .then(this.setNewData)
+        .catch(function (error) {
+            console.log("error with :  " + error);
+        })
+        
+    }
+
+    onStartHandler(){
+        
     }
     render(){
         let lgClose = () => this.setState({ lgShow: false });
@@ -26,7 +54,7 @@ export default class MainMenu extends Component{
                         <Button bsSize = "large" bsStyle = "primary" onClick = {otherOpen} >Others</Button>
                     </Row>
                 
-                    <SelectModal colorSelect = {['red','blue','green','brown']} show={this.state.lgShow} onHide={lgClose} />
+                    <SelectModal colorSelect = {['red','blue','green','brown']} show={this.state.lgShow} patternList = {this.state.data} onHide={lgClose} onStart = {this.onStartHandler} />
                     <LoginModal show = {this.state.otherShow} onHide = {otherClose}/>
                 </div>
             </div>
@@ -83,8 +111,17 @@ class SelectModal extends Component {
         super(props);
         this.state = {
             selectedColor : "",
-            selectedPattern : ""
+            selectedPattern : "",
+            pickerName : "Pattern List",
+            timeText : ""
         }
+        this.changeDropDown = this.changeDropDown.bind(this);
+    }
+
+    changeDropDown(val){
+        this.setState({pickerName : val});
+        console.log('check');
+        console.dir(val);
     }
     render(){ 
         const colorList = this.props.colorSelect.map( (value) => { 
@@ -93,7 +130,7 @@ class SelectModal extends Component {
             }
             return ( <Col md = {1}> <div style = {style} className = "square" onClick = { () => this.setState( {selectedColor : value} ) } > </div> </Col>);
         })
-        console.log(colorList);
+      
         
         if (this.state.selectedColor != ""){
             var selectStyle = {
@@ -102,7 +139,22 @@ class SelectModal extends Component {
                 marginRight : "10%"
             }
         }
-        console.log(this.state.selectedColor);
+     
+        console.log("data : " + this.props.patternList);
+        var exist = [];
+        for (var i = 0 ; i < this.props.patternList.length; i++){
+
+            if (exist.indexOf(this.props.patternList[i].pattern_name) >= 0){
+                continue;
+            }
+            else{
+                exist.push(this.props.patternList[i].pattern_name);
+            }
+        }
+        console.log("exist : ");
+        
+        var pat = exist.map( (val,index) => ( <MenuItem onClick = { () => { this.changeDropDown(val) }}eventKey= {index} >{val}</MenuItem>) )
+        
         return (
             <Modal {...this.props} bsSize="large" aria-labelledby="contained-modal-title-lg">
                 <Modal.Header closeButton>
@@ -125,9 +177,8 @@ class SelectModal extends Component {
                 
 
                 <h4>Select Pattern</h4>
-                <DropdownButton title="Pattern List" id="bg-nested-dropdown">
-                    <MenuItem eventKey="1">Dropdown link</MenuItem>
-                    <MenuItem eventKey="2">Dropdown link</MenuItem>
+                <DropdownButton title= {this.state.pickerName} id="bg-nested-dropdown">
+                    {pat}
                 </DropdownButton>
                 <br/>
                 <Row>
@@ -135,21 +186,16 @@ class SelectModal extends Component {
                         <h4> Time </h4>
                     </div>
                 </Row>
-                <Row>
-                    
+                <Row>    
                     <div className = "container">
-                        
-                    
-                        <FormControl style = {{width : "10vh"}}type="text" placeholder="Time" />
-                        
-                    </div>
-                   
+                        <FormControl style = {{width : "10vh"}}type="text" placeholder="Time" onChange = { (val) => this.setState({timeText : val}) }/>
+                    </div> 
                 </Row>
                 
                 </Modal.Body>
                 <Modal.Footer>
                 <Button onClick={this.props.onHide}>Close</Button>
-                <Button bsStyle = "primary" > Start </Button>
+                <Button bsStyle = "primary" onClick = {this.props.onStart(this.state.pickerName, this.state.selectedColor, this.state.timeText)} > Start </Button>
                 </Modal.Footer>
             </Modal>
             );

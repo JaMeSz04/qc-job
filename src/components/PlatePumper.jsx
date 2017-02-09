@@ -2,8 +2,7 @@ import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
 import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl} from 'react-bootstrap';
-
-
+import axios from 'axios';
 
 
 export default class PlatePumper extends Component {
@@ -72,6 +71,18 @@ export default class PlatePumper extends Component {
   save(name){
       console.log("save");
       console.log(name);
+      
+      axios.post('http://192.168.1.106:3616/savePattern', {
+            "name" : name,
+            "options" : this.state.cellList
+        })
+        .then(function (response) {
+            console.log("response with : "  + response);
+        })
+        .catch(function (error) {
+            console.log("error with :  " + error);
+        });
+        this.setState({ saveShow: false });
   }
  
   render() {

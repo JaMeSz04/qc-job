@@ -17,6 +17,7 @@ var config = {
         //  on the global var jQuery
         "sqlite3": "sqlite3"
     },
+
    module: {
       loaders: [
          {

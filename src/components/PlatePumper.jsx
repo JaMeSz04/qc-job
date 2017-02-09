@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
 import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl} from 'react-bootstrap';
-var mongoose = require('mongoose');
+
 
 
 

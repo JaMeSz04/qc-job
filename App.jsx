@@ -5,11 +5,11 @@ import MainMenu from './src/components/MainMenu.jsx';
 
 class App extends React.Component {
    render() {
-      const Games = <Game shape = "square"/>;
+      const Games = <Game shape = "square" min = {5}/>;
       const Plate = <PlatePumper/>;
       return (
          <div>
-            <Game shape = "square" min = {5}/>
+            {Plate}
          </div>
       );
    }

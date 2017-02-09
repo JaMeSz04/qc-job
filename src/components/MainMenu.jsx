@@ -54,7 +54,7 @@ class LoginModal extends Component {
                             Username
                         </Col>
                         <Col sm={10}>
-                            <FormControl type="text" placeholder="Email" />
+                            <FormControl type="text" placeholder="Username" />
                         </Col>
                         </FormGroup>
 
@@ -122,13 +122,30 @@ class SelectModal extends Component {
                        {colorList}
                     </Row>
                 </div>
+                
 
                 <h4>Select Pattern</h4>
                 <DropdownButton title="Pattern List" id="bg-nested-dropdown">
                     <MenuItem eventKey="1">Dropdown link</MenuItem>
                     <MenuItem eventKey="2">Dropdown link</MenuItem>
                 </DropdownButton>
-
+                <br/>
+                <Row>
+                    <div className = "container">    
+                        <h4> Time </h4>
+                    </div>
+                </Row>
+                <Row>
+                    
+                    <div className = "container">
+                        
+                    
+                        <FormControl style = {{width : "10vh"}}type="text" placeholder="Time" />
+                        
+                    </div>
+                   
+                </Row>
+                
                 </Modal.Body>
                 <Modal.Footer>
                 <Button onClick={this.props.onHide}>Close</Button>

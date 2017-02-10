@@ -18,11 +18,10 @@ export default class DragScreen extends Component {
 
     var dummy = this.state.cellList;
     var counter = 0;
-    for (var i = 0; i < (screen.height - 400); i += 61){
-      for (var j = 0 ; j < (screen.width - 20) ; j+= 61){
-        dummy.push( { id : counter , shape : this.props.shape, xPos : j, yPos : i, color : "gray"} );
+    for (var i = 0; i < this.props.data.length; i += 1){
+        dummy.push( { id : counter , shape : this.props.shape, xPos : this.props.data[i].x, yPos : this.props.data[i].y, color : "gray"} );
         counter++;
-      }
+      
     }
   }
 
@@ -55,11 +54,13 @@ export default class DragScreen extends Component {
   }
  
   render() {
-
-    const renderCell = this.state.cellList.map( (obj) => this.createCell(obj));
+    
+    const renderCell = this.state.cellList.map( (obj) => this.createCell(obj) );
     console.log(renderCell);
-    return (
-        <ReactSVGPanZoom
+   
+    
+    return(
+       <ReactSVGPanZoom
           background = {"#D3D3D3"}
           style={{outline: "1px solid black"}}
           width={screen.width - 380} height={screen.height - 400} ref={Viewer => this.Viewer = Viewer}
@@ -67,9 +68,9 @@ export default class DragScreen extends Component {
           SVGBackground = {"#D3D3D3"}
           tool = {"auto"}>
             <svg width={screen.width - 380} height={screen.height - 400}>
-                {renderCell}    
+                {renderCell}
             </svg>
-        </ReactSVGPanZoom>      
+        </ReactSVGPanZoom> 
     );
   }
 }

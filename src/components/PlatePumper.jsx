@@ -72,7 +72,7 @@ export default class PlatePumper extends Component {
       console.log("save");
       console.log(name);
       
-      axios.post('http://192.168.1.106:3616/savePattern', {
+      axios.post('http://localhost:3616/savePattern', {
             "name" : name,
             "options" : this.state.cellList
         })

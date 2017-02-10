@@ -9,9 +9,11 @@ export default class Game extends Component {
         this.state = {
             selectedColor : "red",
             minute : this.props.min,
-            second : 0
+            second : 0,
+            isSubmitted : false
         }  
-        
+        console.log("DATA");
+        console.log(this.props.data);
     }
 
     componentDidMount(){
@@ -41,7 +43,7 @@ export default class Game extends Component {
             <div class = "container">
                 <Row style = {{marginLeft : "0.5vh", marginTop : "1vh"}}>
                     <Col md = {9}>
-                        <DragScreen shape = "square"/>
+                        <DragScreen shape = "square" data = {this.props.data} isSubmitted = {this.state.isSubmitted}/>
                     </Col>
                     <Col md = {3} >
                         <Row style = {{ marginLeft : "1vh" ,marginRight : "3vh"}}>
@@ -59,7 +61,7 @@ export default class Game extends Component {
                                 <Button  block bsSize="large" bsStyle = "warning">Cancel</Button>
                             </Row>
                             <Row> 
-                                <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary">Submit</Button>
+                                <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => this.setState({isSubmitted : true})} >Submit</Button>
                             </Row>
                         </Row>
                     </Col>

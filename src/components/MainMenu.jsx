@@ -1,7 +1,8 @@
 import React, {Component} from 'react';
 import {Row, Col, Button, Modal, DropdownButton, MenuItem, Form, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
 import axios from 'axios';
-
+import Game from './Game.jsx';
+import OthersMenu from './OthersMenu.jsx';
 
 export default class MainMenu extends Component{
     constructor(props){
@@ -10,7 +11,12 @@ export default class MainMenu extends Component{
             lgShow: false,
             otherShow : false,
             selectedPattern : "snake",
-            data : []
+            selectedColor : "gray",
+            selectedTime : -1,
+            data : [],
+            showGame : false,
+            showOther : false,
+           
         }
         
         this.setState({ saveShow: false });
@@ -24,7 +30,7 @@ export default class MainMenu extends Component{
     }
     componentDidMount(){
         var word = this.state.data;
-        axios.post('http://192.168.1.106:3616/getPattern', {
+        axios.post('http://localhost:3616/getPattern', {
             
         })
         .then(this.setNewData)
@@ -34,16 +40,17 @@ export default class MainMenu extends Component{
         
     }
 
-    onStartHandler(){
-        
+    onStartHandler(patternName, selectedColor , time){
+        this.setState( { selectedPattern : patternName , selectedColor : selectedColor, selectedTime : time , showGame : true, showOther : false});
+
     }
     render(){
         let lgClose = () => this.setState({ lgShow: false });
         let lgOpen = () => this.setState({ lgShow : true });
         let otherOpen = () => this.setState( { otherShow : true });
-        let otherClose = () => this.setState( { otherShow : false});
+        let otherClose = () => this.setState( { otherShow : false});    
 
-        return(
+        let renderElement = (
             <div className = "container">
                 <Row>
                     <h1 style = {{textAlign:"center"}}> QC-Testing Appllication</h1>
@@ -55,8 +62,25 @@ export default class MainMenu extends Component{
                     </Row>
                 
                     <SelectModal colorSelect = {['red','blue','green','brown']} show={this.state.lgShow} patternList = {this.state.data} onHide={lgClose} onStart = {this.onStartHandler} />
-                    <LoginModal show = {this.state.otherShow} onHide = {otherClose}/>
+                    <LoginModal show = {this.state.otherShow} onHide = {otherClose} login  = { () => this.setState( { showOther : true} ) }/>
                 </div>
+            </div>);
+            
+        if (this.state.showGame){
+            var temp = []
+            for (var i = 0 ; i < this.state.data.length ; i++){
+                if (this.state.data[i].pattern_name == this.state.selectedPattern)
+                    temp.push( { x : this.state.data[i].xPos, y : this.state.data[i].yPos});
+            }
+            var time = parseInt(this.state.selectedTime);
+            renderElement = (<Game shape = "square" data = {temp} min = {time}/>)
+        } else if (this.state.showOther) {
+            renderElement = (<OthersMenu data = {this.state.data}/>);
+        } 
+
+        return(
+            <div>
+            {renderElement}
             </div>
         );
     }
@@ -66,7 +90,12 @@ export default class MainMenu extends Component{
 class LoginModal extends Component {
     constructor(props){
         super(props);
-        
+        this.state = {
+            username : "",
+            password : "",
+            userValid : null,
+            passwordValid : null
+        }
     }
 
     render(){
@@ -82,7 +111,7 @@ class LoginModal extends Component {
                             Username
                         </Col>
                         <Col sm={10}>
-                            <FormControl type="text" placeholder="Username" />
+                            <FormControl type="text" placeholder="Username" onChange = {(e) => this.setState({username : e.target.value})} validationState = { this.state.userValid } />
                         </Col>
                         </FormGroup>
 
@@ -91,7 +120,7 @@ class LoginModal extends Component {
                             Password
                         </Col>
                         <Col sm={10}>
-                            <FormControl type="password" placeholder="Password" />
+                            <FormControl type="password" placeholder="Password" onChange = {(e) => this.setState({password : e.target.value})} validationState = { this.state.passwordValid } />
                         </Col>
                         </FormGroup>
 
@@ -99,7 +128,19 @@ class LoginModal extends Component {
                 </Modal.Body>
                 <Modal.Footer>
                     <Button onClick={this.props.onHide}>Close</Button>
-                    <Button bsStyle = "primary" type="submit">Sign in</Button>
+                    <Button bsStyle = "primary" type="submit" onClick = { ()=> {
+                            if (this.state.username == "ShubU"){
+                                if (this.state.password == "Beareater05"){
+                                    this.setState( { isSignin : true , passwordValid : null, userValid : null} );
+                                    this.props.login();
+                                } else {
+                                    this.setState( { passwordValid : "error"} );
+                                }
+                            } else {
+                                this.setState( { userValid : true });
+                            }
+                        }
+                        } >Sign in</Button>
                 </Modal.Footer>
             </Modal>
         );  
@@ -123,6 +164,7 @@ class SelectModal extends Component {
         console.log('check');
         console.dir(val);
     }
+
     render(){ 
         const colorList = this.props.colorSelect.map( (value) => { 
             var style = {
@@ -188,14 +230,14 @@ class SelectModal extends Component {
                 </Row>
                 <Row>    
                     <div className = "container">
-                        <FormControl style = {{width : "10vh"}}type="text" placeholder="Time" onChange = { (val) => this.setState({timeText : val}) }/>
+                        <FormControl style = {{width : "10vh"}}type="text" placeholder="Time" onChange = { (e) => this.setState({timeText : e.target.value}) }/>
                     </div> 
                 </Row>
                 
                 </Modal.Body>
                 <Modal.Footer>
                 <Button onClick={this.props.onHide}>Close</Button>
-                <Button bsStyle = "primary" onClick = {this.props.onStart(this.state.pickerName, this.state.selectedColor, this.state.timeText)} > Start </Button>
+                <Button bsStyle = "primary" onClick = {() => this.props.onStart(this.state.pickerName, this.state.selectedColor, this.state.timeText)} > Start </Button>
                 </Modal.Footer>
             </Modal>
             );

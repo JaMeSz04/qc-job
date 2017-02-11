@@ -73,7 +73,7 @@ export default class MainMenu extends Component{
                     temp.push( { x : this.state.data[i].xPos, y : this.state.data[i].yPos});
             }
             var time = parseInt(this.state.selectedTime);
-            renderElement = (<Game shape = "square" data = {temp} min = {time}/>)
+            renderElement = (<Game shape = "square" data = {temp} min = {time} color  = {this.state.selectedColor}/>)
         } else if (this.state.showOther) {
             renderElement = (<OthersMenu data = {this.state.data}/>);
         } 

@@ -4,6 +4,17 @@
 	border: 1px solid black;
 }
 
+.square2 {
+    width: 70px;
+    height : 70px;
+	border: 1px solid black;
+}
+
+.square3{
+    width: 130px;
+    height : 130px;
+	border: 1px solid black;
+}
 .mini-square{
    
 	width: 10px;

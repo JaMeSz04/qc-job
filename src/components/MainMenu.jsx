@@ -22,8 +22,14 @@ export default class MainMenu extends Component{
         this.setState({ saveShow: false });
         this.setNewData = this.setNewData.bind(this);
         this.onStartHandler = this.onStartHandler.bind(this);
+        this.saveHandler = this.saveHandler.bind(this);
 
     }
+
+    saveHandler(){
+
+    }
+
     setNewData(nData){
         console.log("set new data");
         this.setState({ data : nData.data });
@@ -73,7 +79,7 @@ export default class MainMenu extends Component{
                     temp.push( { x : this.state.data[i].xPos, y : this.state.data[i].yPos});
             }
             var time = parseInt(this.state.selectedTime);
-            renderElement = (<Game shape = "square" data = {temp} min = {time} color  = {this.state.selectedColor}/>)
+            renderElement = (<Game saveHandler = {this.saveHandler} shape = "square" data = {temp} min = {time} color  = {this.state.selectedColor}/>)
         } else if (this.state.showOther) {
             renderElement = (<OthersMenu data = {this.state.data}/>);
         } 

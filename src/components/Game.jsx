@@ -1,42 +1,52 @@
 import React , {Component} from 'react';
 import DragScreen from './DragScreen.jsx';
-import {Row, Col, Button,Panel} from 'react-bootstrap';
+import {Row, Col, Button,Panel, FormControl, Modal} from 'react-bootstrap';
 import colors from '../colors.js';
 import ResultScreen from './ResultScreen.jsx';
+import axios from 'axios';
 
 export default class Game extends Component {
     constructor(props){
         super(props);
         this.state = {
-            selectedColor : "red",
+            selectedColor : "gray",
             minute : this.props.min,
             second : 0,
             isSubmitted : false,
             colorList : [],
             defaultColorList : colors.getColor(this.props.color),
-            finalResult : []
-            
+            finalResult : [],
+            score : 0,
+            fullScore : 0,
+            name : "",
+            allDone : false,
+            showConfirm : false,
+            showSuccess : false
         }  
-        console.log("DATA");
-        console.log(this.props.data);
+       
         this.shuffle = this.shuffle.bind(this);
-        this.state.colorList = this.shuffle(this.state.defaultColorList);
+        this.saveHandler = this.saveHandler.bind(this);
+        //this.state.colorList = this.shuffle(this.state.defaultColorList);
+        this.state.colorList = this.state.defaultColorList;
+
     }
 
     componentDidMount(){
         setInterval( () => {
-            if (this.state.second == 0 && this.state.minute == 0){
-                this.setState( { second : 0 });
-                this.setState( { minute : 0 });
+            if (!this.state.isSubmitted){
+                if (this.state.second == 0 && this.state.minute == 0){
+                    this.setState( { second : 0 });
+                    this.setState( { minute : 0 });
+                }
+                else if (this.state.second == 0){
+                    this.setState( {second : 59} );
+                    this.setState( {minute : this.state.minute - 1});
+                } 
+                else {
+                    this.setState( { second : this.state.second - 1});
+                }
             }
-            else if (this.state.second == 0){
-                this.setState( {second : 59} );
-                this.setState( {minute : this.state.minute - 1});
-            } 
-            else {
-                this.setState( { second : this.state.second - 1});
-            }
-        }, 1000);
+        }, 1000);  
     }
 
     shuffle(data) {
@@ -48,14 +58,41 @@ export default class Game extends Component {
         return a;
     }
 
+    showSuccess(){
+        this.setState({allDone : true});
+    }
+
+
+    saveHandler(){
+        axios.post('http://localhost:3616/saveGame', {
+            name : this.state.name,
+            score : this.state.score,
+            fullscore : this.state.fullScore,
+            time : {
+                min : this.state.minute,
+                second : this.state.second
+            },
+            cellList : this.state.cellList
+        })
+        .then(this.showSuccess)
+        .catch(function (error) {
+            console.log("error with :  " + error);
+        })
+    }
+
     render(){
+        let closeSubmit = () => this.setState({ showConfirm : false , isSubmitted : true});
+        let closeSuccess = () => {this.setState({ showSuccess : false })};
+        let hideSubmit = () => this.setState({ showConfirm : false });
+        let hideSuccess = () => tihs.setState({ showSuccess : false });
+
         var div = {
             background : this.state.selectedColor,
             width: "50%",
             margin: "0 auto"
         };
         var time = this.state.minute + " minutes " + this.state.second + " seconds ";
-       
+        
         
         const colorRender = this.state.colorList.map( (val,index) => {
             return (<div onClick = { () => { console.log("CLICKED"); this.setState( {selectedColor : val.value} )}} style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} className = "square2"/>) ;
@@ -63,11 +100,26 @@ export default class Game extends Component {
         return (
             <div class = "container">
                 <Row style = {{marginLeft : "0.5vh", marginTop : "1vh"}}>
-                    <Col md = {9}>
-                         
+                    <Col md = {9}> 
                          <DragScreen color = {this.state.defaultColorList} shape = "square" data = {this.props.data} isSubmitted = {this.state.isSubmitted} 
-                         onRemove = {(index) =>{var temp = this.state.colorList; 
-                                                temp.splice(index, 1);}}
+                         submit = { (cellList, score, fullscore) => {
+                             console.log("score : " + score);
+                             console.log("fullScore : " + fullscore);
+                             this.setState({score : score, fullScore : fullscore, finalResult : cellList});
+                         }}
+                         onRemove = {(index) =>{var colorList = this.state.colorList; 
+                                                var temp = [];
+                                                for ( var i = 0 ; i < colorList.length ; i++){
+                                                    if (colorList[i].value != index.color){
+                                                        temp.push(colorList[i]);
+                                                    }
+                                                }
+                                                this.setState( { colorList : temp } );
+                         }}
+                         onAdd = { (color) => {var temp = this.state.colorList;
+                                                console.log("adding : " + color.color);
+                                                temp.push({id : color.id , value : color.color})}}
+                         clickCell = { () => this.setState( {selectedColor : "gray"} ) }
                          selectedColor = {this.state.selectedColor} submitHandler = {(val) => {this.setState({finalResult : val, isSubmitted : true})}}/>
                     </Col>
                     <Col md = {3} >
@@ -78,26 +130,79 @@ export default class Game extends Component {
                                 </Panel>
                             </Row>
                             <Row>
+                                {this.state.isSubmitted? 
+                                <Panel header = "score">
+                                    <h2 style = {{textAlign : "center"}}> { this.state.score +  " / " + this.state.fullScore} </h2>
+                                </Panel> : 
                                 <Panel  header = "Selected Color">
                                     <div style = {div} className = "square3"> </div>
-                                </Panel>
+                                </Panel>}
                             </Row>
-                            <Row>
-                                <Button  block bsSize="large" bsStyle = "warning">Cancel</Button>
-                            </Row>
-                            <Row>
-                                <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => {console.log("clicked") ; this.setState({isSubmitted : true})}} >Submit</Button>
-                            </Row>
+                            {this.state.isSubmitted?
+                            <div>
+                                <Row>
+                                    <div style = {{marginLeft : "2vh" , marginRight : "2vh"}}>
+                                        <Row>
+                                        
+                                            <FormControl 
+                                                type="text"
+                                                placeholder="Full name"
+                                                onChange={(event) => { console.log (event.target.value); this.setState( { name : event.target.value});}}
+                                            />
+                                            
+                                        </Row>
+                                    </div>
+                                </Row>
+                                <Row>
+                                    <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => {this.saveHandler}} > Save </Button>
+                                </Row>  
+                            </div>
+                            
+                             : <div>
+                                 <Row style = {{marginTop : "2vh"}}>
+                                    <Button  block bsSize="large" bsStyle = "warning">Cancel</Button>
+                                </Row>
+                                <Row>
+                                    <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => {console.log("clicked") ; this.setState({showConfirm : true})}} >Submit</Button>
+                                </Row>
+                            </div>}
+                            
                         </Row>
                     </Col>
 
                 </Row>
+                {this.state.isSubmitted? <div> </div> : 
                 <Row>
                     <Panel header = "Color Picker" style = {{marginLeft : "5vh" , marginRight : " 3vh", marginTop : "1vh"}}>
                         {colorRender}
                     </Panel>
-                </Row>
+                </Row>}
+                
+                <ExtraModal text = {"Are you sure you want to submit the test?"} show = {this.state.showConfirm} onHide = {hideSubmit} submitText = {"Submit"} onSubmit = {closeSubmit}/>
+                <ExtraModal text = {"Your test result has been saved"} show = {this.state.showSuccess}  onHide = {hideSuccess} submitText = {null}/>
             </div>
+        );
+    }
+}
+
+
+class ExtraModal extends Component{
+    render(){
+        return(
+            <Modal {...this.props} bsSize="small" aria-labelledby="contained-modal-title-sm">
+                <Modal.Header closeButton>
+                <Modal.Title id="contained-modal-title-sm">Submit Confirmation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {this.props.text}
+                </Modal.Body>
+                <Modal.Footer>
+                <Button onClick={this.props.onHide}>Close</Button>
+                { this.props.submitText? 
+                <Button bsStyle = "primary" onClick={this.props.onSubmit}> {this.props.submitText} </Button>
+                : <div></div> }
+                </Modal.Footer> 
+            </Modal>
         );
     }
 }

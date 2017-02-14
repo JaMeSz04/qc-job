@@ -42,8 +42,7 @@ export default class DragScreen extends Component {
   componentWillReceiveProps(nextProps){
       if (nextProps.isSubmitted && !this.state.isSendData){
         this.setState({isSendData : true});
-        console.log("!@!@#@!#!@$@#!@#!@");
-        alert("hello");
+        
         
         var score = 0;
         for (var i = 0 ;  i < this.state.cellList.length ; i++){
@@ -51,7 +50,7 @@ export default class DragScreen extends Component {
             score++;
           }
         }
-        console.log(":ASLKDJ:ASLKDJAS:KLDJ");
+       
         this.props.submit(this.state.cellList, score, this.state.cellList.length);
     }
   }
@@ -65,8 +64,7 @@ export default class DragScreen extends Component {
   createCell(obj,index){
     var word = "";
     if (this.props.isSubmitted){
-      console.log(this.props.color[index].value);
-      console.log(obj.color);
+      
       if (this.props.color[index].value != obj.color){
           for (var i = 0 ; i < this.props.color.length ; i++ ){
               if (this.props.color[i].value == obj.color){
@@ -88,14 +86,14 @@ export default class DragScreen extends Component {
                   for (var i = 0 ; i < temp.length ; i++){
                       if (temp[i].id == obj.id){
                         if (temp[i].color != this.state.defaultColor){
-                          console.log("adding : " + temp[i].color);
+                         
                             this.props.onAdd(temp[i]);
                             temp[i].color = this.state.defaultColor;
                         } else {
                             if (this.props.selectedColor != "gray"){
                               temp[i].color = this.props.selectedColor;
                               this.props.clickCell();
-                              console.log("removing : " + temp[i].color);
+                             
                               this.props.onRemove(temp[i]);
                             }
                         }
@@ -160,7 +158,7 @@ class ResultModal extends Component{
                     <FormControl
                         type="text"
                         placeholder="Pattern name"
-                        onChange={(event) => { console.log (event.target.value); this.setState( { name : event.target.value});}}
+                        onChange={(event) => {  this.setState( { name : event.target.value});}}
                     />
                 </Modal.Body>
                 <Modal.Footer>

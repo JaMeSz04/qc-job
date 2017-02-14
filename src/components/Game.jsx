@@ -84,7 +84,7 @@ export default class Game extends Component {
         let closeSubmit = () => this.setState({ showConfirm : false , isSubmitted : true});
         let closeSuccess = () => {this.setState({ showSuccess : false })};
         let hideSubmit = () => this.setState({ showConfirm : false });
-        let hideSuccess = () => tihs.setState({ showSuccess : false });
+        let hideSuccess = () => this.setState({ showSuccess : false });
 
         var div = {
             background : this.state.selectedColor,
@@ -95,7 +95,7 @@ export default class Game extends Component {
         
         
         const colorRender = this.state.colorList.map( (val,index) => {
-            return (<div onClick = { () => { console.log("CLICKED"); this.setState( {selectedColor : val.value} )}} style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} className = "square2"/>) ;
+            return (<div onClick = { () => { this.setState( {selectedColor : val.value} )}} style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} className = "square2"/>) ;
         });
         return (
             <div class = "container">
@@ -103,8 +103,7 @@ export default class Game extends Component {
                     <Col md = {9}> 
                          <DragScreen color = {this.state.defaultColorList} shape = "square" data = {this.props.data} isSubmitted = {this.state.isSubmitted} 
                          submit = { (cellList, score, fullscore) => {
-                             console.log("score : " + score);
-                             console.log("fullScore : " + fullscore);
+                        
                              this.setState({score : score, fullScore : fullscore, finalResult : cellList});
                          }}
                          onRemove = {(index) =>{var colorList = this.state.colorList; 
@@ -117,7 +116,7 @@ export default class Game extends Component {
                                                 this.setState( { colorList : temp } );
                          }}
                          onAdd = { (color) => {var temp = this.state.colorList;
-                                                console.log("adding : " + color.color);
+                                                
                                                 temp.push({id : color.id , value : color.color})}}
                          clickCell = { () => this.setState( {selectedColor : "gray"} ) }
                          selectedColor = {this.state.selectedColor} submitHandler = {(val) => {this.setState({finalResult : val, isSubmitted : true})}}/>
@@ -147,14 +146,14 @@ export default class Game extends Component {
                                             <FormControl 
                                                 type="text"
                                                 placeholder="Full name"
-                                                onChange={(event) => { console.log (event.target.value); this.setState( { name : event.target.value});}}
+                                                onChange={(event) => { this.setState( { name : event.target.value});}}
                                             />
                                             
                                         </Row>
                                     </div>
                                 </Row>
                                 <Row>
-                                    <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => {this.saveHandler}} > Save </Button>
+                                    <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => {this.setState({showSuccess : true})}} > Save </Button>
                                 </Row>  
                             </div>
                             
@@ -163,7 +162,7 @@ export default class Game extends Component {
                                     <Button  block bsSize="large" bsStyle = "warning">Cancel</Button>
                                 </Row>
                                 <Row>
-                                    <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => {console.log("clicked") ; this.setState({showConfirm : true})}} >Submit</Button>
+                                    <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => { this.setState({showConfirm : true})}} >Submit</Button>
                                 </Row>
                             </div>}
                             
@@ -197,7 +196,11 @@ class ExtraModal extends Component{
                     {this.props.text}
                 </Modal.Body>
                 <Modal.Footer>
-                <Button onClick={this.props.onHide}>Close</Button>
+                { this.props.submitText? 
+                <Button onClick={this.props.onHide}>Close</Button> : 
+                <Button bsStyle = "primary" onClick = {this.props.onHide}> Close </Button>
+                }
+                
                 { this.props.submitText? 
                 <Button bsStyle = "primary" onClick={this.props.onSubmit}> {this.props.submitText} </Button>
                 : <div></div> }

@@ -14,7 +14,12 @@ export default class OthersMenu extends Component {
     }
     
     setNewData(data){
-        this.setState( { data : data } );
+        var temp = data.data;
+        temp.reverse();
+        this.setState( { data : temp } );
+
+        console.log("data : " + temp);
+        console.dir(temp);
     }
 
     componentDidMount(){
@@ -26,13 +31,17 @@ export default class OthersMenu extends Component {
         })
     }
     render(){
-        const wrapData = this.state.data.map( (val, index) => (<tr onClick = {() => {console.log("clicked on +" + index)}}>
-                                                        <td>val.test_name</td>
-                                                        <td>val.score</td>
-                                                        <td>val.test_date</td>
-                                                        <td>val.shape</td>
-                                                        <td>val.shade</td>
-                                                    </tr>) );
+        const renderData = this.state.data.map( (val) => {
+            return (
+                <tr>
+                    <td>{val.name}</td>
+                    <th>{val.score}</th>
+                    <th>{val.tested_date}</th>
+                    <th>{val.shape}</th>
+                    <th>{val.shade}</th>
+                </tr>
+            )
+        });
         var exist = [];
         for (var i = 0 ; i < this.props.data.length ; i++){
             if (exist.indexOf(this.props.data[i].pattern_name) == -1){
@@ -58,29 +67,7 @@ export default class OthersMenu extends Component {
                             </tr>
                             </thead>
                             <tbody>
-                            <tr onClick = {() => {alert("clicked")}}>
-                            
-                                <td>Mark</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr>
-                                
-                                <td>Jacob</td>
-                                <td>Thornton</td>
-                                <td>@fat</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
-                            <tr>
-                            
-                                <td colSpan="2">Larry the Bird</td>
-                                <td>@twitter</td>
-                                <td>Otto</td>
-                                <td>@mdo</td>
-                            </tr>
+                                {renderData}
                             </tbody>
                         </Table>
                     </div>

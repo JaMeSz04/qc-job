@@ -31,13 +31,11 @@ export default class MainMenu extends Component{
     }
 
     setNewData(nData){
-        console.log("set new data");
         this.setState({ data : nData.data });
     }
     componentDidMount(){
         var word = this.state.data;
         axios.post('http://localhost:3616/getPattern', {
-            
         })
         .then(this.setNewData)
         .catch(function (error) {
@@ -167,8 +165,7 @@ class SelectModal extends Component {
 
     changeDropDown(val){
         this.setState({pickerName : val});
-        console.log('check');
-        console.dir(val);
+       
     }
 
     render(){ 
@@ -188,7 +185,7 @@ class SelectModal extends Component {
             }
         }
      
-        console.log("data : " + this.props.patternList);
+       
         var exist = [];
         for (var i = 0 ; i < this.props.patternList.length; i++){
 
@@ -199,7 +196,8 @@ class SelectModal extends Component {
                 exist.push(this.props.patternList[i].pattern_name);
             }
         }
-        console.log("exist : ");
+       
+       
         
         var pat = exist.map( (val,index) => ( <MenuItem onClick = { () => { this.changeDropDown(val) }}eventKey= {index} >{val}</MenuItem>) )
         

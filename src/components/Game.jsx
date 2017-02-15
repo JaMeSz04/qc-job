@@ -21,14 +21,16 @@ export default class Game extends Component {
             name : "",
             allDone : false,
             showConfirm : false,
-            showSuccess : false
+            showSuccess : false,
+            timeSpend : 0
         }  
        
         this.shuffle = this.shuffle.bind(this);
         this.saveHandler = this.saveHandler.bind(this);
         //this.state.colorList = this.shuffle(this.state.defaultColorList);
         this.state.colorList = this.state.defaultColorList;
-
+        this.showSuccess = this.showSuccess.bind(this);
+        
     }
 
     componentDidMount(){
@@ -45,6 +47,7 @@ export default class Game extends Component {
                 else {
                     this.setState( { second : this.state.second - 1});
                 }
+                this.setState( { timeSpend : this.state.timeSpend + 1})
             }
         }, 1000);  
     }
@@ -59,25 +62,31 @@ export default class Game extends Component {
     }
 
     showSuccess(){
-        this.setState({allDone : true});
+       
     }
 
 
     saveHandler(){
+        var d = new Date();
+        var word = d.getUTCDate() + "/" + (d.getUTCMonth() + 1) + "/" + d.getUTCFullYear();
+        this.setState({showSuccess : true});
+        console.log("hehe");
         axios.post('http://localhost:3616/saveGame', {
             name : this.state.name,
             score : this.state.score,
             fullscore : this.state.fullScore,
-            time : {
-                min : this.state.minute,
-                second : this.state.second
-            },
-            cellList : this.state.cellList
+            cellList : this.state.cellList,
+            timeSpend : this.state.timeSpend,
+            date : word,
+            shade : this.props.color,
+            shape : this.props.shape
         })
-        .then(this.showSuccess)
+        .then( () => {} )
         .catch(function (error) {
             console.log("error with :  " + error);
         })
+
+        
     }
 
     render(){
@@ -85,6 +94,7 @@ export default class Game extends Component {
         let closeSuccess = () => {this.setState({ showSuccess : false })};
         let hideSubmit = () => this.setState({ showConfirm : false });
         let hideSuccess = () => this.setState({ showSuccess : false });
+        let reloadPage = () => {location.reload()};
 
         var div = {
             background : this.state.selectedColor,
@@ -132,7 +142,7 @@ export default class Game extends Component {
                                 {this.state.isSubmitted? 
                                 <Panel header = "score">
                                     <h2 style = {{textAlign : "center"}}> { this.state.score +  " / " + this.state.fullScore} </h2>
-                                </Panel> : 
+                                </Panel> :
                                 <Panel  header = "Selected Color">
                                     <div style = {div} className = "square3"> </div>
                                 </Panel>}
@@ -142,18 +152,16 @@ export default class Game extends Component {
                                 <Row>
                                     <div style = {{marginLeft : "2vh" , marginRight : "2vh"}}>
                                         <Row>
-                                        
                                             <FormControl 
                                                 type="text"
                                                 placeholder="Full name"
-                                                onChange={(event) => { this.setState( { name : event.target.value});}}
+                                                onChange={(event) => { this.setState( { name : event.target.value } );}}
                                             />
-                                            
                                         </Row>
                                     </div>
                                 </Row>
                                 <Row>
-                                    <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => {this.setState({showSuccess : true})}} > Save </Button>
+                                    <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {this.saveHandler} > Save </Button>
                                 </Row>  
                             </div>
                             
@@ -178,7 +186,7 @@ export default class Game extends Component {
                 </Row>}
                 
                 <ExtraModal text = {"Are you sure you want to submit the test?"} show = {this.state.showConfirm} onHide = {hideSubmit} submitText = {"Submit"} onSubmit = {closeSubmit}/>
-                <ExtraModal text = {"Your test result has been saved"} show = {this.state.showSuccess}  onHide = {hideSuccess} submitText = {null}/>
+                <ExtraModal text = {"Your test result has been saved"} show = {this.state.showSuccess}  onHide = {hideSuccess} onReset = {reloadPage} submitText = {null}/>
             </div>
         );
     }
@@ -198,7 +206,7 @@ class ExtraModal extends Component{
                 <Modal.Footer>
                 { this.props.submitText? 
                 <Button onClick={this.props.onHide}>Close</Button> : 
-                <Button bsStyle = "primary" onClick = {this.props.onHide}> Close </Button>
+                <Button bsStyle = "primary" onClick = {this.props.onReset}> Close </Button>
                 }
                 
                 { this.props.submitText? 

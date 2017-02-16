@@ -90,7 +90,7 @@ export default class PlatePumper extends Component {
     const renderCell = this.state.cellList.map( (obj) => this.createCell(obj));
     let saveClose = () => { this.setState({ saveShow: false }) }
     let cancelClose = () => { this.setState({ cancelShow: false }) }
-    
+
 
     return (
             <Row>

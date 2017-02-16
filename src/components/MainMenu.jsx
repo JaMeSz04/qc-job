@@ -4,6 +4,7 @@ import axios from 'axios';
 import Game from './Game.jsx';
 import OthersMenu from './OthersMenu.jsx';
 
+
 export default class MainMenu extends Component{
     constructor(props){
         super(props);
@@ -59,16 +60,19 @@ export default class MainMenu extends Component{
                 <Row>
                     <h1 style = {{textAlign:"center"}}> QC-Testing Appllication</h1>
                 </Row>
-                <div style = {{ margin: "auto", maxWidth: "300px"}}>
-                    <Row style = {{alignContent : "center"}}>
-                        <Button bsSize = "large" bsStyle = "primary" onClick = {lgOpen}>Test</Button>
-                        <Button bsSize = "large" bsStyle = "primary" onClick = {otherOpen} >Others</Button>
+                <div style = {{width : "30vh", margin: "auto"}}>
+                    <Row style = {{marginTop : "50vh"}}>
+                        <Button block bsSize = "large" bsStyle = "primary" onClick = {lgOpen}>Test</Button>
+                    </Row>
+                    <Row style = {{marginTop : "2vh"}}>
+                         <Button block bsSize = "large" bsStyle = "primary" onClick = {otherOpen} >Others</Button>
                     </Row>
                 
                     <SelectModal colorSelect = {['red','blue','green','brown']} show={this.state.lgShow} patternList = {this.state.data} onHide={lgClose} onStart = {this.onStartHandler} />
                     <LoginModal show = {this.state.otherShow} onHide = {otherClose} login  = { () => this.setState( { showOther : true} ) }/>
                 </div>
             </div>);
+         
             
         if (this.state.showGame){
             var temp = []

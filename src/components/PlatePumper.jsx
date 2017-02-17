@@ -98,11 +98,11 @@ export default class PlatePumper extends Component {
                     <ReactSVGPanZoom
                     background = {"#D3D3D3"}
                     style={{outline: "1px solid black", marginTop : "1vh"}}
-                    width={screen.width - 15} height={screen.height - 400} ref={Viewer => this.Viewer = Viewer}
+                    width={screen.width - 300} height={screen.height - 400} ref={Viewer => this.Viewer = Viewer}
                     onClick={(event) => this.handleOnClick(event)}
                     SVGBackground = {"#D3D3D3"}
                     tool = {"auto"}>
-                        <svg width={screen.width - 15} height={screen.height - 400}>
+                        <svg width={screen.width - 300} height={screen.height - 400}>
                             {renderCell}  
                         </svg>
                     </ReactSVGPanZoom> 
@@ -112,7 +112,7 @@ export default class PlatePumper extends Component {
                         
                     </Col>
                     <Col md = {3}>
-                        <Button block bsStyle = "warning" bsSize = "large" > Cancel </Button>
+                        <Button block bsStyle = "warning" bsSize = "large" onClick = {() =>this.props.onHide()} > Cancel </Button>
                     </Col>
                     <Col md ={3}>
                         <Button block bsStyle = "primary" bsSize = "large" onClick={ () => this.setState({ saveShow: true })}> Save </Button>

@@ -92,9 +92,8 @@ export default class OthersMenu extends Component {
                     </svg>
                 </ReactSVGPanZoom>);
 
-
-        return(
-            <div className = "container">
+        
+        var val = (<div className = "container">
                 <Row>
                     <h1 style = {{textAlign:"center"}}> QC-Testing Appllication</h1>
                 </Row>
@@ -146,6 +145,20 @@ export default class OthersMenu extends Component {
                     </Col>
                 </Row>
 
+            </div>)
+
+        if (this.state.isShowAdd){
+            val = (<div className = "container">
+                <Row>
+                    <h1 style = {{textAlign:"center"}}> QC-Testing Appllication</h1>
+                </Row>
+                
+                <PlatePumper onHide = { () => this.setState({isShowAdd : false} )}/>
+            </div>)
+        }
+        return(
+            <div>
+                {val}
             </div>
         );
     }

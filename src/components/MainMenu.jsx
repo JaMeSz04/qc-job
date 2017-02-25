@@ -17,6 +17,7 @@ export default class MainMenu extends Component{
             data : [],
             showGame : false,
             showOther : false,
+            selectedShape : "square"
            
         }
         
@@ -45,8 +46,8 @@ export default class MainMenu extends Component{
         
     }
 
-    onStartHandler(patternName, selectedColor , time){
-        this.setState( { selectedPattern : patternName , selectedColor : selectedColor, selectedTime : time , showGame : true, showOther : false});
+    onStartHandler(patternName, selectedColor , time, shape){
+        this.setState( { selectedPattern : patternName , selectedColor : selectedColor, selectedTime : time , showGame : true, showOther : false, selectedShape : shape});
 
     }
     render(){
@@ -68,11 +69,10 @@ export default class MainMenu extends Component{
                          <Button block bsSize = "large" bsStyle = "primary" onClick = {otherOpen} >Others</Button>
                     </Row>
                 
-                    <SelectModal colorSelect = {['red','blue','green','brown']} show={this.state.lgShow} patternList = {this.state.data} onHide={lgClose} onStart = {this.onStartHandler} />
+                    <SelectModal colorSelect = {['red','brown']} show={this.state.lgShow} patternList = {this.state.data} onHide={lgClose} onStart = {this.onStartHandler} />
                     <LoginModal show = {this.state.otherShow} onHide = {otherClose} login  = { () => this.setState( { showOther : true} ) }/>
                 </div>
             </div>);
-         
             
         if (this.state.showGame){
             var temp = []
@@ -81,7 +81,7 @@ export default class MainMenu extends Component{
                     temp.push( { x : this.state.data[i].xPos, y : this.state.data[i].yPos});
             }
             var time = parseInt(this.state.selectedTime);
-            renderElement = (<Game saveHandler = {this.saveHandler} shape = "square" data = {temp} min = {time} color  = {this.state.selectedColor}/>)
+            renderElement = (<Game saveHandler = {this.saveHandler}  data = {temp} min = {time} shape = {this.state.selectedShape} color  = {this.state.selectedColor}/>)
         } else if (this.state.showOther) {
             renderElement = (<OthersMenu data = {this.state.data}/>);
         } 
@@ -162,7 +162,8 @@ class SelectModal extends Component {
             selectedColor : "",
             selectedPattern : "",
             pickerName : "Pattern List",
-            timeText : ""
+            timeText : "",
+            selectedShape : "Shape"
         }
         this.changeDropDown = this.changeDropDown.bind(this);
     }
@@ -232,6 +233,17 @@ class SelectModal extends Component {
                 </DropdownButton>
                 <br/>
                 <Row>
+                    
+                    <div className = "container">
+                        <h4> Select Shape </h4>
+                        <DropdownButton title= {this.state.selectedShape} id="bg-nested-dropdown">
+                            <MenuItem onClick = { () => { this.setState( { selectedShape : "square" }) }} eventKey= "1" > square </MenuItem>
+                            <MenuItem onClick = { () => { this.setState( { selectedShape : "circle" }) }}eventKey= "2" > circle </MenuItem>
+                            <MenuItem onClick = { () => { this.setState( { selectedShape : "triangle" }) }}eventKey= "3" > triangle </MenuItem>
+                        </DropdownButton>  
+                    </div>
+                </Row>
+                <Row>
                     <div className = "container">    
                         <h4> Time </h4>
                     </div>
@@ -245,7 +257,7 @@ class SelectModal extends Component {
                 </Modal.Body>
                 <Modal.Footer>
                 <Button onClick={this.props.onHide}>Close</Button>
-                <Button bsStyle = "primary" onClick = {() => this.props.onStart(this.state.pickerName, this.state.selectedColor, this.state.timeText)} > Start </Button>
+                <Button bsStyle = "primary" onClick = {() => this.props.onStart(this.state.pickerName, this.state.selectedColor, this.state.timeText, this.state.selectedShape)} > Start </Button>
                 </Modal.Footer>
             </Modal>
             );

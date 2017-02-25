@@ -14,6 +14,15 @@ module.exports = {
                 counter++;
             }
             return temp;
+        } else if (color == 'brown'){
+            var temp = [];
+            var counter = 0;
+            for (var i = 165; i > 128; i-= 2){
+                temp.push({id : counter , value : "rgb(" + i + ",42,42)"});
+                counter++;
+            }
+            console.dir(temp);
+            return temp;
         }
         
     }

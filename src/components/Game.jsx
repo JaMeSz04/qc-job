@@ -34,11 +34,13 @@ export default class Game extends Component {
     }
 
     componentDidMount(){
+        
         setInterval( () => {
             if (!this.state.isSubmitted){
                 if (this.state.second == 0 && this.state.minute == 0){
                     this.setState( { second : 0 });
                     this.setState( { minute : 0 });
+                    this.setState( { isSubmitted : true });
                 }
                 else if (this.state.second == 0){
                     this.setState( {second : 59} );
@@ -105,13 +107,14 @@ export default class Game extends Component {
         
         
         const colorRender = this.state.colorList.map( (val,index) => {
-            return (<div onClick = { () => { this.setState( {selectedColor : val.value} )}} style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} className = "square2"/>) ;
+            
+                return (<div onClick = { () => { this.setState( {selectedColor : val.value} )}} style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} className = "square2"/>) ;
         });
         return (
             <div class = "container">
                 <Row style = {{marginLeft : "0.5vh", marginTop : "1vh"}}>
                     <Col md = {9}> 
-                         <DragScreen color = {this.state.defaultColorList} shape = "square" data = {this.props.data} isSubmitted = {this.state.isSubmitted} 
+                         <DragScreen color = {this.state.defaultColorList} shape = {this.props.shape} data = {this.props.data} isSubmitted = {this.state.isSubmitted} 
                          submit = { (cellList, score, fullscore) => {
                         
                              this.setState({score : score, fullScore : fullscore, finalResult : cellList});
@@ -167,7 +170,7 @@ export default class Game extends Component {
                             
                              : <div>
                                  <Row style = {{marginTop : "2vh"}}>
-                                    <Button  block bsSize="large" bsStyle = "warning">Cancel</Button>
+                                    <Button  block bsSize="large" bsStyle = "warning" onClick = {() => {location.reload()}}>Cancel</Button>
                                 </Row>
                                 <Row>
                                     <Button style = {{marginTop : "1vh"}} block bsSize="large" bsStyle = "primary"  onClick = {() => { this.setState({showConfirm : true})}} >Submit</Button>

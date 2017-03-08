@@ -25,6 +25,7 @@ export default class Game extends Component {
             timeSpend : 0
         }  
        
+        
         this.shuffle = this.shuffle.bind(this);
         this.saveHandler = this.saveHandler.bind(this);
         //this.state.colorList = this.shuffle(this.state.defaultColorList);
@@ -34,13 +35,28 @@ export default class Game extends Component {
     }
 
     componentDidMount(){
-        
+        if (!this.props.min) {
+            this.setState( {minute : 0})
+        }
         setInterval( () => {
+            console.log(this.props.min);
+            console.log(this.state.min);
             if (!this.state.isSubmitted){
-                if (this.state.second == 0 && this.state.minute == 0){
+                if (!this.props.min){
+                     
+                     if (this.state.second == 59){
+                        this.setState( {second : 0} );
+                        this.setState( {minute : this.state.minute + 1});
+                    } 
+                    else {
+                        this.setState( { second : this.state.second + 1});
+                    }
+                } else {
+                    if (this.state.second == 0 && this.state.minute == 0){
                     this.setState( { second : 0 });
                     this.setState( { minute : 0 });
                     this.setState( { isSubmitted : true });
+                    this.forceUpdate();
                 }
                 else if (this.state.second == 0){
                     this.setState( {second : 59} );
@@ -50,6 +66,8 @@ export default class Game extends Component {
                     this.setState( { second : this.state.second - 1});
                 }
                 this.setState( { timeSpend : this.state.timeSpend + 1})
+                }
+                
             }
         }, 1000);  
     }

@@ -4,6 +4,7 @@ import axios from 'axios';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
 import PlatePumper from './PlatePumper.jsx';
+import { BootstrapTable, TableHeaderColumn } from 'react-bootstrap-table';
 
 
 export default class OthersMenu extends Component {
@@ -18,6 +19,7 @@ export default class OthersMenu extends Component {
         }
         this.Viewer = null;
         this.setNewData = this.setNewData.bind(this);
+  
     }
     
     setNewData(data){
@@ -27,7 +29,10 @@ export default class OthersMenu extends Component {
 
         console.log("data : " + temp);
         console.dir(temp);
+        this.forceUpdate();
     }
+
+
 
     componentDidMount(){
         this.Viewer.fitToViewer();
@@ -37,19 +42,23 @@ export default class OthersMenu extends Component {
         .catch(function (error) {
             console.log("error with :  " + error);
         })
+        
     }
+
     render(){
-        const renderData = this.state.data.map( (val) => {
-            return (
-                <tr>
-                    <td>{val.name}</td>
-                    <th>{val.score}</th>
-                    <th>{val.tested_date}</th>
-                    <th>{val.shape}</th>
-                    <th>{val.shade}</th>
-                </tr>
-            )
-        });
+        
+
+        const renderData = 
+             (
+                <BootstrapTable height='500px' data={this.state.data} striped={true}  exportCSV csvFileName='qc-test-data.csv' options={ { noDataText: 'No data' } }>
+                    <TableHeaderColumn dataField="name" isKey = {true} dataAlign="center">Name</TableHeaderColumn>
+                    <TableHeaderColumn dataField="score" dataAlign="center">Score</TableHeaderColumn>
+                    <TableHeaderColumn dataField="tested_date" dataAlign="center">Tested Date</TableHeaderColumn>
+                    <TableHeaderColumn dataField="shape" dataAlign="center">Shape</TableHeaderColumn>
+                    <TableHeaderColumn dataField="shade" dataAlign="center">Shade</TableHeaderColumn>
+                </BootstrapTable>
+            );
+        
         var exist = [];
         for (var i = 0 ; i < this.props.data.length ; i++){
             if (exist.indexOf(this.props.data[i].pattern_name) == -1){
@@ -100,22 +109,7 @@ export default class OthersMenu extends Component {
                 
                 {this.state.isHistory?
                  <Row>
-                    <div style = {{marginTop : "3vh"}} className = "container" id = "table">
-                        <Table  striped bordered condensed hover >
-                            <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Score</th>
-                                <th>Tested Date</th>
-                                <th>Shape</th>
-                                <th>Shade</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                                {renderData}
-                            </tbody>
-                        </Table>
-                    </div>
+                    {renderData}  
                 </Row> : 
                 <div>
                     {svgComp}
@@ -128,7 +122,7 @@ export default class OthersMenu extends Component {
                     <DropdownButton title="Pattern List" id="bg-nested-dropdown" bsSize = "large">
                         {patternList}
                     </DropdownButton> :
-                    <div></div>
+                    <div> </div>
                     }
                     </Col>
                     <Col md = {4}>

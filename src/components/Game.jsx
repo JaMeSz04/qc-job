@@ -4,6 +4,7 @@ import {Row, Col, Button,Panel, FormControl, Modal} from 'react-bootstrap';
 import colors from '../colors.js';
 import ResultScreen from './ResultScreen.jsx';
 import axios from 'axios';
+import Draggable from 'react-draggable';
 
 export default class Game extends Component {
     constructor(props){
@@ -22,25 +23,40 @@ export default class Game extends Component {
             allDone : false,
             showConfirm : false,
             showSuccess : false,
-            timeSpend : 0
+            timeSpend : 0,
+            xPos : 0,
+            yPos : 0,
+            isDrop : false,
+            deltaPosition: {
+                x: 0, y: 0
+            },
+            colorRender : []
         }  
        
-        
         this.shuffle = this.shuffle.bind(this);
         this.saveHandler = this.saveHandler.bind(this);
+        this.handleDrag = this.handleDrag.bind(this);
+        //this.handleStart = this.handleStart.bind(this);
+        //this.handleStop = this.handleStop.bind(this);
         //this.state.colorList = this.shuffle(this.state.defaultColorList);
         this.state.colorList = this.state.defaultColorList;
-        this.showSuccess = this.showSuccess.bind(this);
-        
+       
+       
     }
 
+    
+
+ 
+        
+       
+    
     componentDidMount(){
+        
         if (!this.props.min) {
             this.setState( {minute : 0})
         }
         setInterval( () => {
-            console.log(this.props.min);
-            console.log(this.state.min);
+            console.log(this.state.selectedColor)
             if (!this.state.isSubmitted){
                 if (!this.props.min){
                      
@@ -51,6 +67,7 @@ export default class Game extends Component {
                     else {
                         this.setState( { second : this.state.second + 1});
                     }
+                    this.setState( { timeSpend : this.state.timeSpend + 1})
                 } else {
                     if (this.state.second == 0 && this.state.minute == 0){
                     this.setState( { second : 0 });
@@ -81,16 +98,11 @@ export default class Game extends Component {
         return a;
     }
 
-    showSuccess(){
-       
-    }
-
-
     saveHandler(){
         var d = new Date();
         var word = d.getUTCDate() + "/" + (d.getUTCMonth() + 1) + "/" + d.getUTCFullYear();
         this.setState({showSuccess : true});
-        console.log("hehe");
+      
         axios.post('http://localhost:3616/saveGame', {
             name : this.state.name,
             score : this.state.score,
@@ -109,6 +121,47 @@ export default class Game extends Component {
         
     }
 
+    handleDrag(e, ui){
+        console.log("draging");
+        const {x,y} = this.state.deltaPosition;
+        this.setState( {
+            deltaPosition : {
+                x : x + ui.deltaX, 
+                y : y + ui.deltaY
+            }
+        });
+        console.log(this.state.deltaPosition.x + " : " + this.state.deltaPosition.y);
+
+    }
+
+    componentWillMount(){
+        const dragHandler = { onDrag : this.handleDrag};
+        this.setState( { colorRender : this.state.colorList.map( (val,index) => {
+                if (val.value != null){
+                    
+                return (
+                    <Draggable zIndex = {100} {...dragHandler} defaultPosition = { { x : 10, y : 20} } draggable ="true"  onStop = {(event) => { 
+                            //document.elementFromPoint(x, y).click();
+                            var temp = this.state.colorRender;
+                            console.log("remove : " + val.value);
+                            temp[index] = (<div style = {{display : "inline_block"}}></div>)
+                            
+                            this.setState({ selectedColor : "gray", isDrop : true, x : window.screenX, y : window.screenY});
+                            this.forceUpdate();
+                            
+                            console.log("------");
+                            document.elementFromPoint(event.clientX, event.clientY).click();
+                            }
+                        } onStart = {() => { console.log ("Draging " + val.value); this.setState( {selectedColor : val.value} )}} >
+                        <div  style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} className = { this.props.shape + "2"}/>
+                    </Draggable>
+                    ) ;
+                }
+        }) } );
+    }
+
+    
+
     render(){
         let closeSubmit = () => this.setState({ showConfirm : false , isSubmitted : true});
         let closeSuccess = () => {this.setState({ showSuccess : false })};
@@ -116,23 +169,30 @@ export default class Game extends Component {
         let hideSuccess = () => this.setState({ showSuccess : false });
         let reloadPage = () => {location.reload()};
 
+        
+
+        this.state.colorList.map( (val) => {if (val.value == null) {console.log("detect null")}
+
+        } );
+                                                
+        console.log(this.state.colorRender);
         var div = {
             background : this.state.selectedColor,
             width: "50%",
             margin: "0 auto"
         };
+
         var time = this.state.minute + " minutes " + this.state.second + " seconds ";
         
         
-        const colorRender = this.state.colorList.map( (val,index) => {
-            
-                return (<div onClick = { () => { this.setState( {selectedColor : val.value} )}} style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} className = "square2"/>) ;
-        });
+        
+
+ 
         return (
             <div class = "container">
                 <Row style = {{marginLeft : "0.5vh", marginTop : "1vh"}}>
                     <Col md = {9}> 
-                         <DragScreen color = {this.state.defaultColorList} shape = {this.props.shape} data = {this.props.data} isSubmitted = {this.state.isSubmitted} 
+                         <DragScreen isDrop = {this.state.isDrop} reset = {() => this.setState({isDrop : false})} color = {this.state.defaultColorList} shape = {this.props.shape} data = {this.props.data} isSubmitted = {this.state.isSubmitted} 
                          submit = { (cellList, score, fullscore) => {
                         
                              this.setState({score : score, fullScore : fullscore, finalResult : cellList});
@@ -201,9 +261,7 @@ export default class Game extends Component {
                 </Row>
                 {this.state.isSubmitted? <div> </div> : 
                 <Row>
-                    <Panel header = "Color Picker" style = {{marginLeft : "5vh" , marginRight : " 3vh", marginTop : "1vh"}}>
-                        {colorRender}
-                    </Panel>
+                    {this.state.colorRender}
                 </Row>}
                 
                 <ExtraModal text = {"Are you sure you want to submit the test?"} show = {this.state.showConfirm} onHide = {hideSubmit} submitText = {"Submit"} onSubmit = {closeSubmit}/>

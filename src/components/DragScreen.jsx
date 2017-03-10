@@ -5,6 +5,7 @@ import Cell from './Cell.jsx';
 import Colors from '../colors.js';
 import {Modal,FormControl, Button} from 'react-bootstrap';
 
+
 export default class DragScreen extends Component {
   
   constructor(props, context) {
@@ -17,6 +18,7 @@ export default class DragScreen extends Component {
       showResult : false,
       showModal : this.props.isSubmitted,
       isSendData : false,
+      
     };
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
@@ -63,6 +65,12 @@ export default class DragScreen extends Component {
   
   createCell(obj,index){
     var word = "";
+    var xPos = obj.xPos;
+    var yPos = obj.yPos;
+    if (this.props.shape == "circle"){
+      xPos -= 10;
+      yPos += 10;
+    }
     if (this.props.isSubmitted){
       
       if (this.props.color[index].value != obj.color){
@@ -77,11 +85,12 @@ export default class DragScreen extends Component {
       }
 
 
-      return <Cell num = {obj.id} x = {obj.xPos} y = {obj.yPos} color = {obj.color} shape = {obj.shape} text = {word} onClickCell = {
+      return <Cell num = {obj.id} x = {xPos} y = {yPos} color = {obj.color} shape = {obj.shape} text = {word} onClickCell = {
         () => { } } />;
     } else {
-      return <Cell num = {obj.id} x = {obj.xPos} y = {obj.yPos} color = {obj.color} shape = {obj.shape} onClickCell = {
+      return <Cell num = {obj.id} x = {xPos} y = {yPos} color = {obj.color} shape = {obj.shape} onClickCell = {
         () => {
+                 
                   var temp = this.state.cellList;
                   for (var i = 0 ; i < temp.length ; i++){
                       if (temp[i].id == obj.id){
@@ -119,10 +128,13 @@ export default class DragScreen extends Component {
     for (var i = 0 ; i < temp.length ; i++){
       temp[i].id = i;
     }
+    
     console.dir(this.state.cellList);
       const renderCell = this.state.cellList.map( (obj,index) => this.createCell(obj,index) );
       toRender = 
-        <ReactSVGPanZoom
+        <ReactSVGPanZoom 
+            className = "dragScreen"
+            onMouseMove={event => console.log('move', event.x, event.y)}
             background = {"#D3D3D3"}
             style={{outline: "1px solid black"}}
             width={screen.width - 380} height={height} ref={Viewer => this.Viewer = Viewer}

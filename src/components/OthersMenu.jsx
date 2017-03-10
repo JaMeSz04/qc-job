@@ -15,24 +15,47 @@ export default class OthersMenu extends Component {
             isHistory : false,
             selectedData : null,
             shape : "square",
-            isShowAdd : false
+            isShowAdd : false,
+            selectedPattern : ""
         }
         this.Viewer = null;
         this.setNewData = this.setNewData.bind(this);
+        this.removePattern = this.removePattern.bind(this);
   
     }
     
     setNewData(data){
         var temp = data.data;
         temp.reverse();
-        this.setState( { data : temp } );
-
-        console.log("data : " + temp);
+        
+        const temp2 = temp.map( (val) => {
+            console.dir(val.time_spend);
+            val.time_spend = (Math.floor(parseInt(val.time_spend) / 60 )) +  " min " + (parseInt(val.time_spend) % 60) + " second";
+            console.log("val : " + val.time_spend);
+            return val;
+        } );
+        this.setState( { data : temp2 } );
+        
+        console.log("data : " + temp2);
         console.dir(temp);
         this.forceUpdate();
     }
 
-
+    removePattern(){
+        axios.post('http://localhost:3616/deletePattern', {
+            name : this.state.selectedPattern
+        }).catch( function(error) {
+            console.log("error : " + error);
+        })
+        for (var i = 0 ; i < this.props.data.length; i++){
+            if (this.props.data[i].pattern_name == this.state.selectedPattern){
+                this.props.data.splice(this.props.data[i], 1);
+            }
+        }
+        this.props.resetData();
+        this.setState({selectedData : null});
+        this.forceUpdate();
+    }
 
     componentDidMount(){
         this.Viewer.fitToViewer();
@@ -46,13 +69,13 @@ export default class OthersMenu extends Component {
     }
 
     render(){
-        
 
         const renderData = 
              (
                 <BootstrapTable height='500px' data={this.state.data} striped={true}  exportCSV csvFileName='qc-test-data.csv' options={ { noDataText: 'No data' } }>
                     <TableHeaderColumn dataField="name" isKey = {true} dataAlign="center">Name</TableHeaderColumn>
                     <TableHeaderColumn dataField="score" dataAlign="center">Score</TableHeaderColumn>
+                    <TableHeaderColumn dataField="time_spend" dataAlign="center">Time Spend</TableHeaderColumn>
                     <TableHeaderColumn dataField="tested_date" dataAlign="center">Tested Date</TableHeaderColumn>
                     <TableHeaderColumn dataField="shape" dataAlign="center">Shape</TableHeaderColumn>
                     <TableHeaderColumn dataField="shade" dataAlign="center">Shade</TableHeaderColumn>
@@ -70,6 +93,7 @@ export default class OthersMenu extends Component {
             var temp = [];
             for (var i = 0 ; i < this.props.data.length ; i++){
                 if (this.props.data[i].pattern_name == val){
+                    this.setState({selectedPattern : val})
                     temp.push( {id : this.props.data[i].id ,xPos : this.props.data[i].xPos, yPos : this.props.data[i].yPos, color : "gray", shape : this.state.shape } )
                 }
             }
@@ -128,7 +152,7 @@ export default class OthersMenu extends Component {
                     <Col md = {4}>
                     </Col>
                     <Col md = {2}>
-                        {!this.state.isHistory? <Button block bsSize = "large" bsStyle = "danger" onClick = { () => {} } > Remove </Button> : <div></div>}
+                        {!this.state.isHistory? <Button block bsSize = "large" bsStyle = "danger" onClick = { () => { this.removePattern() } } > Remove </Button> : <div></div>}
                     </Col>
                     <Col md = {2}>
                         {!this.state.isHistory? <Button block bsSize = "large" bsStyle = "success" onClick = { () => { this.setState({isShowAdd : true})} } > Add </Button> : <div></div>}
@@ -147,7 +171,7 @@ export default class OthersMenu extends Component {
                     <h1 style = {{textAlign:"center"}}> QC-Testing Appllication</h1>
                 </Row>
                 
-                <PlatePumper onHide = { () => this.setState({isShowAdd : false} )}/>
+                <PlatePumper resetData = { () =>  {this.setState({ isShowAdd : false } ) ; this.props.resetData(); this.forceUpdate() }} onHide = { () => this.setState({isShowAdd : false} )}/>
             </div>)
         }
         return(

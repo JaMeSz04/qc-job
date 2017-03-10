@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
-import {Row, Col, Button, Modal, DropdownButton, MenuItem, Form, FormGroup, FormControl, ControlLabel} from 'react-bootstrap';
+import {Row, Col, Button, Modal, DropdownButton, MenuItem, Form, FormGroup, FormControl,Popover, ControlLabel, OverlayTrigger } from 'react-bootstrap';
 import axios from 'axios';
 import Game from './Game.jsx';
 import OthersMenu from './OthersMenu.jsx';
-
+import colors from '../colors.js'
 
 export default class MainMenu extends Component{
     constructor(props){
@@ -25,6 +25,7 @@ export default class MainMenu extends Component{
         this.setNewData = this.setNewData.bind(this);
         this.onStartHandler = this.onStartHandler.bind(this);
         this.saveHandler = this.saveHandler.bind(this);
+        this.getNewData = this.getNewData.bind(this);
 
     }
 
@@ -37,13 +38,17 @@ export default class MainMenu extends Component{
     }
     componentDidMount(){
         var word = this.state.data;
+        this.getNewData();
+        
+    }
+
+    getNewData(){
         axios.post('http://localhost:3616/getPattern', {
         })
         .then(this.setNewData)
         .catch(function (error) {
             console.log("error with :  " + error);
-        })
-        
+        });
     }
 
     onStartHandler(patternName, selectedColor , time, shape){
@@ -83,7 +88,7 @@ export default class MainMenu extends Component{
             var time = parseInt(this.state.selectedTime);
             renderElement = (<Game saveHandler = {this.saveHandler}  data = {temp} min = {time} shape = {this.state.selectedShape} color  = {this.state.selectedColor}/>)
         } else if (this.state.showOther) {
-            renderElement = (<OthersMenu data = {this.state.data}/>);
+            renderElement = (<OthersMenu data = {this.state.data} resetData = { () => { this.getNewData()} }/>);
         } 
 
         return(
@@ -174,11 +179,17 @@ class SelectModal extends Component {
     }
 
     render(){ 
+        
         const colorList = this.props.colorSelect.map( (value) => { 
             var style = {
                 background : value
             }
-            return ( <Col md = {1}> <div style = {style} className = "square" onClick = { () => this.setState( {selectedColor : value} ) } > </div> </Col>);
+            const colorPick = colors.getColor(value).map( (c) => (<div className = "mini-square" style = {{background : c.value, display : "inline-block"}}>  </div>) );
+            return ( <Col md = {1}> 
+                        <OverlayTrigger delay = {500} placement="top" overlay={ <Popover id="popover-positioned-top" title={value}> {colorPick} </Popover> }> 
+                        <div style = {style} className = "square" onClick = { () => this.setState( {selectedColor : value} ) } >  </div>
+                        </OverlayTrigger>
+                    </Col>);
         })
       
         

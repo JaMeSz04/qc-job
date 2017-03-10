@@ -10,7 +10,7 @@ export default class Cell extends Component {
    
     return(
       <foreignObject x= {this.props.x} y= {this.props.y} width= {100} height= {100} >
-          <div style = {color} className = {this.props.shape} onClick= { (event) => { this.props.onClickCell() }}> <h3 style = {{textAlign : "center", padding: "20px 0"}}> {this.props.text} </h3> </div>
+          <div style = {color} className = {this.props.shape} onClick= { (event) => { this.props.onClickCell(event) }}> <h3 style = {{textAlign : "center", padding: "20px 0"}}> {this.props.text} </h3> </div>
       </foreignObject>
     );
   }

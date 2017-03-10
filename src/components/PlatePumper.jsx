@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
-import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl} from 'react-bootstrap';
+import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl, Checkbox} from 'react-bootstrap';
 import axios from 'axios';
 
 
@@ -14,35 +14,65 @@ export default class PlatePumper extends Component {
       defaultColor : "gray",
       size : 0,
       saveShow : false,
-      saveClose : false
+      saveClose : false,
+      toggleActive : true,
+      allowAdd : true
     };
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
     this.createCell = this.createCell.bind(this);
     this.save = this.save.bind(this);
+    this.onToggle = this.onToggle.bind(this);
 
   }
 
   componentDidMount() {
     this.Viewer.fitToViewer();
   }
+  onToggle() {
+    console.log("toggled");
+    this.setState({ toggleActive: !this.state.toggleActive });
+  }
 
   handleOnClick(event){
     console.log("plate clicked");
     var temp = this.state.cellList;
+    
     var newX = (event.x - (event.x % 60)) + 1;
     var newY = (event.y - (event.y % 60)) + 1;
+
+    var x2 = (event.x - 30);
+    var y2 = (event.y - 30);
+    
     var contained = false;
     for (var i = 0 ; i < temp.length; i++){
+       
         if (temp[i].xPos == newX && temp[i].yPos == newY){
             contained = true;
             temp.splice(i, 1);
+        } else if (temp[i].xPos == x2  && temp[i].yPos == y2 ){
+            contained = true;
+            temp.splice(i,1);
         }
+        
     }
     
+    
     if (!contained) {
-        temp.push( {id : this.state.size , color : "gray", xPos :  newX, yPos : newY, shape : "square" });
-        this.setState( { size : this.state.size + 1 } );
+        if (this.state.allowAdd){
+
+        
+            if (this.state.toggleActive){
+                temp.push( {id : this.state.size , color : "gray", xPos :  newX, yPos : newY, shape : "square" ,type : "g"});
+            } else {
+                temp.push( {id : this.state.size , color : "gray", xPos :  x2, yPos : y2, shape : "square" , type : "ng"});
+
+            }
+            
+            this.setState( { size : this.state.size + 1 } );
+        } else {
+            this.setState({allowAdd : true});
+        }
         
     }
     this.forceUpdate();
@@ -51,19 +81,15 @@ export default class PlatePumper extends Component {
   
   createCell(obj){
     return <Cell num = {obj.id} x = {obj.xPos} y = {obj.yPos} color = {obj.color} shape = {obj.shape} onClickCell = {
-      () => {
-                console.log("it work as id : " + obj.id);
+      (event) => {
                 var temp = this.state.cellList;
                 for (var i = 0 ; i < temp.length ; i++){
                     if (temp[i].id == obj.id){
-                      if (temp[i].color != this.state.defaultColor){
-                          temp[i].color = this.state.defaultColor;
-                      } else {
-                          temp[i].color = this.state.selectedColor;
-                      }
+                        temp.splice(i,1);
+                        this.setState({allowAdd : false});
                     }
                 }
-                this.forceUpdate();
+                
             }
     }  />;
   }
@@ -83,6 +109,7 @@ export default class PlatePumper extends Component {
             console.log("error with :  " + error);
         });
         this.setState({ saveShow: false });
+        this.props.resetData();
   }
  
   render() {
@@ -96,20 +123,27 @@ export default class PlatePumper extends Component {
             <Row>
                 <Row style = {{marginLeft: "3vh"}}>
                     <ReactSVGPanZoom
-                    background = {"#D3D3D3"}
+                    background = {"gray"}
                     style={{outline: "1px solid black", marginTop : "1vh"}}
                     width={screen.width - 300} height={screen.height - 400} ref={Viewer => this.Viewer = Viewer}
                     onClick={(event) => this.handleOnClick(event)}
                     SVGBackground = {"#D3D3D3"}
                     tool = {"auto"}>
-                        <svg width={screen.width - 300} height={screen.height - 400}>
+                        <svg width={screen.width + 1000} height={screen.height + 1000}>
                             {renderCell}  
                         </svg>
                     </ReactSVGPanZoom> 
                 </Row>
                 <Row style = {{marginLeft : "3vh", marginTop : "3vh", marginRight : "1vh"}}>
-                    <Col md = {6}>
+                    <Col md = {4}>
                         
+                    </Col>
+                    <Col style = {{height: "20px"}}  md = {2}>
+                        <FormGroup>
+                            <Checkbox onClick = {() => this.onToggle()} checked = {this.state.toggleActive}>
+                            Grid
+                            </Checkbox>
+                        </FormGroup>
                     </Col>
                     <Col md = {3}>
                         <Button block bsStyle = "warning" bsSize = "large" onClick = {() =>this.props.onHide()} > Cancel </Button>

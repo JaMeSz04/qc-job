@@ -151,12 +151,15 @@ export default class OthersMenu extends Component {
                     </Col>
                     <Col md = {2}>
                     </Col>
+                    {!this.state.isHistory?
                     <Col md = {2}>
                         <DropdownButton title="Shape" id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({shape: event}); this.forceUpdate()}}>
                             <MenuItem eventKey="square"> Square </MenuItem> 
                             <MenuItem eventKey="circle"> Circle </MenuItem>
                         </DropdownButton>
                     </Col>
+                    : <div></div>
+                    }
                     <Col md = {2}>
                         {!this.state.isHistory? <Button block bsSize = "large" bsStyle = "danger" onClick = { () => { this.removePattern() } } > Remove </Button> : <div></div>}
                     </Col>

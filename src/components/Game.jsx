@@ -32,6 +32,16 @@ export default class Game extends Component {
             },
             
         }  
+
+        var temp = [];
+        for (var i = 0 ; i < this.props.data.length; i++){
+            if (i >= this.state.defaultColorList.length - 1){
+                break;
+            }
+            temp.push(this.state.defaultColorList[i]);
+        }
+
+        
        
         this.shuffle = this.shuffle.bind(this);
         this.saveHandler = this.saveHandler.bind(this);
@@ -39,17 +49,12 @@ export default class Game extends Component {
         //this.handleStart = this.handleStart.bind(this);
         //this.handleStop = this.handleStop.bind(this);
         //this.state.colorList = this.shuffle(this.state.defaultColorList);
-        this.state.colorList = this.state.defaultColorList;
+        this.state.colorList = temp
+        this.state.defaultColorList = temp;
        
        
     }
-
-    
-
- 
-        
        
-    
     componentDidMount(){
         
         if (!this.props.min) {
@@ -144,7 +149,7 @@ export default class Game extends Component {
         const dragHandler = { onDrag : this.handleDrag};
         var colorRender = this.state.colorList.map( (val,index) => {  
                 return (
-                    <div  style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} onClick = { () => this.setState({selectedColor : val.value})} className = { this.props.shape + "2"}/>
+                    <div tabindex = {index} style = {{ marginRight : "1vh" ,background : val.value , display: "inline-block",whiteSpace: "nowrap"}} onClick = { () => this.setState({selectedColor : val.value})} className = { this.props.shape + "F " + this.props.shape + "2"}/>
                     ) ;
                 
         });
@@ -236,8 +241,10 @@ export default class Game extends Component {
 
                 </Row>
                 {this.state.isSubmitted? <div> </div> : 
-                <Row>
-                    {colorRender}
+                <Row style = {{marginLeft : "2vh", marginRight : "1vh", marginTop : "2vh"}}>
+                   <div className = "scrollable">
+                        {colorRender}
+                   </div>
                 </Row>}
                 
                 <ExtraModal text = {"Are you sure you want to submit the test?"} show = {this.state.showConfirm} onHide = {hideSubmit} submitText = {"Submit"} onSubmit = {closeSubmit}/>

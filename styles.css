@@ -10,17 +10,36 @@
 	border: 1px solid black;
 }
 
+
 .square2 {
     width: 70px;
     height : 70px;
 	border: 1px solid black;
+	box-shadow: 2px 2px 2px #888888;
+}
+
+.squareF:focus{
+	opacity: 0.3;
+	background : black;
 }
 .circle2 {
 	width: 70px;
     height : 70px;
 	border-radius : 50%;
 	border: 1px solid black;
+	box-shadow: 2px 2px 2px #888888;
 	
+}
+
+
+
+.circleF:focus{
+	opacity : 0.3;
+	background : black;
+}
+
+.scrollable{
+	overflow-y: scroll;
 }
 
 .square3{

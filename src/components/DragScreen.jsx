@@ -18,6 +18,7 @@ export default class DragScreen extends Component {
       showResult : false,
       showModal : this.props.isSubmitted,
       isSendData : false,
+      colorList: []
       
     };
     this.Viewer = null;
@@ -32,6 +33,8 @@ export default class DragScreen extends Component {
         counter++;
       
     }
+
+    
 
     
   }
@@ -67,20 +70,29 @@ export default class DragScreen extends Component {
     var word = "";
     var xPos = obj.xPos;
     var yPos = obj.yPos;
+
+    var temp = [];
     
-    console.log(obj.id);
+    for (var i = 0 ; i < this.props.color.length; i++){
+      temp.push( { id : i, value : this.props.color[i].value});
+    }
+
+    
+   
     if (this.props.isSubmitted){
       
-      if (this.props.color[index].value != obj.color){
-          for (var i = 0 ; i < this.props.color.length ; i++ ){
-              if (this.props.color[i].value == obj.color){
-                word = this.props.color[i].id;
+      if (temp[index].value != obj.color){
+        
+          for (var i = 0 ; i < temp.length ; i++ ){
+              if (temp[i].value == obj.color){
+                word = temp[i].id;
                 word++;
               }
           }
       } else {
         word = "";
       }
+      
 
       
       return <Cell num = {obj.id} x = {xPos} y = {yPos} color = {obj.color} shape = {obj.shape} text = {word} isSubmitted = {this.props.isSubmitted} onClickCell = {

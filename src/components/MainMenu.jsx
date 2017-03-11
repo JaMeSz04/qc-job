@@ -74,7 +74,7 @@ export default class MainMenu extends Component{
                          <Button block bsSize = "large" bsStyle = "primary" onClick = {otherOpen} >Others</Button>
                     </Row>
                 
-                    <SelectModal colorSelect = {['red','brown']} show={this.state.lgShow} patternList = {this.state.data} onHide={lgClose} onStart = {this.onStartHandler} />
+                    <SelectModal colorSelect = {colors.getList()} show={this.state.lgShow} patternList = {this.state.data} onHide={lgClose} onStart = {this.onStartHandler} />
                     <LoginModal show = {this.state.otherShow} onHide = {otherClose} login  = { () => this.setState( { showOther : true} ) }/>
                 </div>
             </div>);
@@ -168,7 +168,8 @@ class SelectModal extends Component {
             selectedPattern : "",
             pickerName : "Pattern List",
             timeText : "",
-            selectedShape : "Shape"
+            selectedShape : "Shape",
+            selectMini : null
         }
         this.changeDropDown = this.changeDropDown.bind(this);
     }
@@ -181,13 +182,15 @@ class SelectModal extends Component {
     render(){ 
         
         const colorList = this.props.colorSelect.map( (value) => { 
+            var colortemp = colors.getColor(value)[0].value;
+            
             var style = {
-                background : value
+                background : colortemp
             }
             const colorPick = colors.getColor(value).map( (c) => (<div className = "mini-square" style = {{background : c.value, display : "inline-block"}}>  </div>) );
             return ( <Col md = {1}> 
                         <OverlayTrigger delay = {500} placement="top" overlay={ <Popover id="popover-positioned-top" title={value}> {colorPick} </Popover> }> 
-                        <div style = {style} className = "square" onClick = { () => this.setState( {selectedColor : value} ) } >  </div>
+                        <div style = {style} className = "square" onClick = { () => this.setState( {selectedColor : value, selectMini : colors.getColor(value)[0].value} ) } >  </div>
                         </OverlayTrigger>
                     </Col>);
         })
@@ -195,7 +198,7 @@ class SelectModal extends Component {
         
         if (this.state.selectedColor != ""){
             var selectStyle = {
-                background : this.state.selectedColor,
+                background : this.state.selectMini,
                 marginTop : "2vh",
                 marginRight : "10%"
             }

@@ -30,7 +30,7 @@ export default class Game extends Component {
             deltaPosition: {
                 x: 0, y: 0
             },
-            colorRender : []
+            
         }  
        
         this.shuffle = this.shuffle.bind(this);
@@ -56,7 +56,7 @@ export default class Game extends Component {
             this.setState( {minute : 0})
         }
         setInterval( () => {
-            console.log(this.state.selectedColor)
+            
             if (!this.state.isSubmitted){
                 if (!this.props.min){
                      
@@ -122,7 +122,7 @@ export default class Game extends Component {
     }
 
     handleDrag(e, ui){
-        console.log("draging");
+       
         const {x,y} = this.state.deltaPosition;
         this.setState( {
             deltaPosition : {
@@ -130,37 +130,9 @@ export default class Game extends Component {
                 y : y + ui.deltaY
             }
         });
-        console.log(this.state.deltaPosition.x + " : " + this.state.deltaPosition.y);
+     
 
     }
-
-    componentWillMount(){
-        const dragHandler = { onDrag : this.handleDrag};
-        this.setState( { colorRender : this.state.colorList.map( (val,index) => {
-                if (val.value != null){
-                    
-                return (
-                    <Draggable zIndex = {100} {...dragHandler} defaultPosition = { { x : 10, y : 20} } draggable ="true"  onStop = {(event) => { 
-                            //document.elementFromPoint(x, y).click();
-                            var temp = this.state.colorRender;
-                            console.log("remove : " + val.value);
-                            temp[index] = (<div style = {{display : "inline_block"}}></div>)
-                            
-                            this.setState({ selectedColor : "gray", isDrop : true, x : window.screenX, y : window.screenY});
-                            this.forceUpdate();
-                            
-                            console.log("------");
-                            document.elementFromPoint(event.clientX, event.clientY).click();
-                            }
-                        } onStart = {() => { console.log ("Draging " + val.value); this.setState( {selectedColor : val.value} )}} >
-                        <div  style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} className = { this.props.shape + "2"}/>
-                    </Draggable>
-                    ) ;
-                }
-        }) } );
-    }
-
-    
 
     render(){
         let closeSubmit = () => this.setState({ showConfirm : false , isSubmitted : true});
@@ -169,13 +141,16 @@ export default class Game extends Component {
         let hideSuccess = () => this.setState({ showSuccess : false });
         let reloadPage = () => {location.reload()};
 
-        
+        const dragHandler = { onDrag : this.handleDrag};
+        var colorRender = this.state.colorList.map( (val,index) => {  
+                return (
+                    <div  style = {{background : val.value , display: "inline-block",whiteSpace: "nowrap"}} onClick = { () => this.setState({selectedColor : val.value})} className = { this.props.shape + "2"}/>
+                    ) ;
+                
+        });
 
-        this.state.colorList.map( (val) => {if (val.value == null) {console.log("detect null")}
-
-        } );
                                                 
-        console.log(this.state.colorRender);
+       
         var div = {
             background : this.state.selectedColor,
             width: "50%",
@@ -184,10 +159,6 @@ export default class Game extends Component {
 
         var time = this.state.minute + " minutes " + this.state.second + " seconds ";
         
-        
-        
-
- 
         return (
             <div class = "container">
                 <Row style = {{marginLeft : "0.5vh", marginTop : "1vh"}}>
@@ -200,11 +171,16 @@ export default class Game extends Component {
                          onRemove = {(index) =>{var colorList = this.state.colorList; 
                                                 var temp = [];
                                                 for ( var i = 0 ; i < colorList.length ; i++){
+                                                    
                                                     if (colorList[i].value != index.color){
                                                         temp.push(colorList[i]);
+                                                    } else {
+                                                        console.log("REMOVE : " + colorList[i]);
                                                     }
                                                 }
                                                 this.setState( { colorList : temp } );
+                                                
+                                                this.forceUpdate();
                          }}
                          onAdd = { (color) => {var temp = this.state.colorList;
                                                 
@@ -261,7 +237,7 @@ export default class Game extends Component {
                 </Row>
                 {this.state.isSubmitted? <div> </div> : 
                 <Row>
-                    {this.state.colorRender}
+                    {colorRender}
                 </Row>}
                 
                 <ExtraModal text = {"Are you sure you want to submit the test?"} show = {this.state.showConfirm} onHide = {hideSubmit} submitText = {"Submit"} onSubmit = {closeSubmit}/>

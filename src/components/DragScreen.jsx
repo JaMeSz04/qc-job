@@ -67,10 +67,8 @@ export default class DragScreen extends Component {
     var word = "";
     var xPos = obj.xPos;
     var yPos = obj.yPos;
-    if (this.props.shape == "circle"){
-      xPos -= 10;
-      yPos += 10;
-    }
+    
+    console.log(obj.id);
     if (this.props.isSubmitted){
       
       if (this.props.color[index].value != obj.color){
@@ -84,18 +82,17 @@ export default class DragScreen extends Component {
         word = "";
       }
 
-
-      return <Cell num = {obj.id} x = {xPos} y = {yPos} color = {obj.color} shape = {obj.shape} text = {word} onClickCell = {
+      
+      return <Cell num = {obj.id} x = {xPos} y = {yPos} color = {obj.color} shape = {obj.shape} text = {word} isSubmitted = {this.props.isSubmitted} onClickCell = {
         () => { } } />;
     } else {
-      return <Cell num = {obj.id} x = {xPos} y = {yPos} color = {obj.color} shape = {obj.shape} onClickCell = {
+      return <Cell num = {obj.id} x = {xPos} y = {yPos} color = {obj.color} shape = {obj.shape} isSubmitted = {this.props.isSubmitted}  onClickCell = {
         () => {
                  
                   var temp = this.state.cellList;
                   for (var i = 0 ; i < temp.length ; i++){
                       if (temp[i].id == obj.id){
                         if (temp[i].color != this.state.defaultColor){
-                         
                             this.props.onAdd(temp[i]);
                             temp[i].color = this.state.defaultColor;
                         } else {
@@ -129,12 +126,12 @@ export default class DragScreen extends Component {
       temp[i].id = i;
     }
     
-    console.dir(this.state.cellList);
+    
       const renderCell = this.state.cellList.map( (obj,index) => this.createCell(obj,index) );
       toRender = 
         <ReactSVGPanZoom 
             className = "dragScreen"
-            onMouseMove={event => console.log('move', event.x, event.y)}
+           
             background = {"#D3D3D3"}
             style={{outline: "1px solid black"}}
             width={screen.width - 380} height={height} ref={Viewer => this.Viewer = Viewer}

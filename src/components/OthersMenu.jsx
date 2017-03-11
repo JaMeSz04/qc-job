@@ -106,7 +106,7 @@ export default class OthersMenu extends Component {
         if (this.state.selectedData != null){
             renderCell = this.state.selectedData.map( (obj,index) => {
                 console.log( obj.xPos + " : " + obj.yPos );
-                return <Cell num = {obj.id} x = {obj.xPos} y = {obj.yPos} color = {obj.color} shape = {obj.shape} />
+                return <Cell num = {obj.id} x = {obj.xPos} y = {obj.yPos} color = {obj.color} shape = {this.state.shape} />
             } )
         }
         
@@ -149,7 +149,13 @@ export default class OthersMenu extends Component {
                     <div> </div>
                     }
                     </Col>
-                    <Col md = {4}>
+                    <Col md = {2}>
+                    </Col>
+                    <Col md = {2}>
+                        <DropdownButton title="Shape" id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({shape: event}); this.forceUpdate()}}>
+                            <MenuItem eventKey="square"> Square </MenuItem> 
+                            <MenuItem eventKey="circle"> Circle </MenuItem>
+                        </DropdownButton>
                     </Col>
                     <Col md = {2}>
                         {!this.state.isHistory? <Button block bsSize = "large" bsStyle = "danger" onClick = { () => { this.removePattern() } } > Remove </Button> : <div></div>}

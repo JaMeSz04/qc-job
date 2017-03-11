@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
-import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl, Checkbox} from 'react-bootstrap';
+import {Row, Col, Button,Panel,Modal, form, FormGroup, FormControl, Checkbox, DropdownButton, MenuItem} from 'react-bootstrap';
 import axios from 'axios';
 
 
@@ -16,7 +16,8 @@ export default class PlatePumper extends Component {
       saveShow : false,
       saveClose : false,
       toggleActive : true,
-      allowAdd : true
+      allowAdd : true,
+      shape : "square"
     };
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
@@ -80,7 +81,7 @@ export default class PlatePumper extends Component {
   }
   
   createCell(obj){
-    return <Cell num = {obj.id} x = {obj.xPos} y = {obj.yPos} color = {obj.color} shape = {obj.shape} onClickCell = {
+    return <Cell num = {obj.id} x = {obj.xPos} y = {obj.yPos} color = {obj.color} shape = {this.state.shape} onClickCell = {
       (event) => {
                 var temp = this.state.cellList;
                 for (var i = 0 ; i < temp.length ; i++){
@@ -129,20 +130,26 @@ export default class PlatePumper extends Component {
                     onClick={(event) => this.handleOnClick(event)}
                     SVGBackground = {"#D3D3D3"}
                     tool = {"auto"}>
-                        <svg width={screen.width + 1000} height={screen.height + 1000}>
+                        <svg width={screen.width + 500} height={screen.height + 500}>
                             {renderCell}  
                         </svg>
                     </ReactSVGPanZoom> 
                 </Row>
                 <Row style = {{marginLeft : "3vh", marginTop : "3vh", marginRight : "1vh"}}>
-                    <Col md = {4}>
+                    <Col md = {2}>
                         
+                    </Col>
+                    <Col md = {2}>
+                        <DropdownButton title="Shape" id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({shape: event}); this.forceUpdate()}}>
+                            <MenuItem eventKey="square"> Square </MenuItem> 
+                            <MenuItem eventKey="circle"> Circle </MenuItem>
+                        </DropdownButton>
                     </Col>
                     <Col style = {{height: "20px"}}  md = {2}>
                         <FormGroup>
-                            <Checkbox onClick = {() => this.onToggle()} checked = {this.state.toggleActive}>
-                            Grid
-                            </Checkbox>
+                            <Button block bsSize = "large" onClick = {() => this.onToggle()} checked = {this.state.toggleActive}>
+                            { "Grid " + (this.state.toggleActive? "on" : "off")}
+                            </Button>
                         </FormGroup>
                     </Col>
                     <Col md = {3}>

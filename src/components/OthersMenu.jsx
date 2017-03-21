@@ -16,7 +16,10 @@ export default class OthersMenu extends Component {
             selectedData : null,
             shape : "square",
             isShowAdd : false,
-            selectedPattern : ""
+            selectedPattern : "",
+            colorList : [],
+            showColorModal : false,
+            selectedColor : null
         }
         this.Viewer = null;
         this.setNewData = this.setNewData.bind(this);
@@ -71,8 +74,9 @@ export default class OthersMenu extends Component {
 
         axios.post('http://localhost:3616/getColor', {
             
-        }).then( () => {
-            //do something
+        }).then( (temp) => {
+           var data = temp.data;
+           this.setState({colorList: data})
         }).catch((error) => {
             console.log("error get color : " + error);
         });
@@ -151,7 +155,10 @@ export default class OthersMenu extends Component {
                         {renderCell}
                     </svg>
                 </ReactSVGPanZoom>);
-
+        
+        const colorList = this.state.colorList.map( (val) => {
+            <MenuItem eventKey = {val.name} > {val.name} </MenuItem> 
+        });
         
         var val = (<div className = "container">
                 <Row>
@@ -178,9 +185,8 @@ export default class OthersMenu extends Component {
                     </Col>
                     <Col md = {2}>
                     {!this.state.isHistory? 
-                        <DropdownButton title="Shape" id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({shape: event}); this.forceUpdate()}}>
-                            <MenuItem eventKey="square"> Square </MenuItem> 
-                            <MenuItem eventKey="circle"> Circle </MenuItem>
+                        <DropdownButton title="Shape" id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({showColorModal: true, selectedColor : event}); this.forceUpdate()}}>
+                           {colorList}
                         </DropdownButton>
                     : <div></div>}
                     </Col>

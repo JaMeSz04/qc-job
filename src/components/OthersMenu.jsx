@@ -21,6 +21,8 @@ export default class OthersMenu extends Component {
         this.Viewer = null;
         this.setNewData = this.setNewData.bind(this);
         this.removePattern = this.removePattern.bind(this);
+        this.createColorHandler = this.createColorHandler.bind(this);
+        this.addColorHandler = this.addColorHandler.bind(this);
   
     }
     
@@ -66,6 +68,31 @@ export default class OthersMenu extends Component {
             console.log("error with :  " + error);
         })
         
+
+        axios.post('http://localhost:3616/getColor', {
+            
+        }).then( () => {
+            //do something
+        }).catch((error) => {
+            console.log("error get color : " + error);
+        });
+
+        
+    }
+
+    createColorHandler(colorList){
+        axios.post('http://localhost:3616/createColor',{
+            "colorList" : colorList
+        }).catch((error) => {
+            console.log("error with create color : " + error);
+        });
+    }
+
+    addColorHandler(color){
+        axios.post('http://localhost:3616/createColor', {
+            "name" : color.name,
+            "value" : color.value
+        })
     }
 
     render(){
@@ -150,6 +177,12 @@ export default class OthersMenu extends Component {
                     }
                     </Col>
                     <Col md = {2}>
+                    {!this.state.isHistory? 
+                        <DropdownButton title="Shape" id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({shape: event}); this.forceUpdate()}}>
+                            <MenuItem eventKey="square"> Square </MenuItem> 
+                            <MenuItem eventKey="circle"> Circle </MenuItem>
+                        </DropdownButton>
+                    : <div></div>}
                     </Col>
                     {!this.state.isHistory?
                     <Col md = {2}>

@@ -17,7 +17,9 @@ export default class PlatePumper extends Component {
       saveClose : false,
       toggleActive : true,
       allowAdd : true,
-      shape : "square"
+      shape : "square",
+      changeCircleGrid : false
+
     };
     this.Viewer = null;
     this.handleOnClick = this.handleOnClick.bind(this);
@@ -39,11 +41,21 @@ export default class PlatePumper extends Component {
     console.log("plate clicked");
     var temp = this.state.cellList;
     
-    var newX = (event.x - (event.x % 60)) + 1;
-    var newY = (event.y - (event.y % 60)) + 1;
+
+    if (this.state.shape == "square" || (this.state.shape == "circle" && !this.state.changeCircleGrid)){
+         var newX = (event.x - (event.x % 60)) + 1;
+         var newY = (event.y - (event.y % 60)) + 1;
+
+    } else if (this.state.shape == "circle" && this.state.changeCircleGrid){
+        var newX = (event.x - (event.x % 60) + 31);
+        var newY = (event.y - (event.y % 60) - 7);
+    }
+   
 
     var x2 = (event.x - 30);
     var y2 = (event.y - 30);
+
+    
     
     var contained = false;
     for (var i = 0 ; i < temp.length; i++){
@@ -61,7 +73,6 @@ export default class PlatePumper extends Component {
     
     if (!contained) {
         if (this.state.allowAdd){
-
         
             if (this.state.toggleActive){
                 temp.push( {id : this.state.size , color : "gray", xPos :  newX, yPos : newY, shape : "square" ,type : "g"});
@@ -135,19 +146,25 @@ export default class PlatePumper extends Component {
                         </svg>
                     </ReactSVGPanZoom> 
                 </Row>
-                <Row style = {{marginLeft : "3vh", marginTop : "3vh", marginRight : "1vh"}}>
+                <Row style = {{marginLeft : "1vh", marginTop : "3vh"}}>
                     <Col md = {2}>
-                        
-                    </Col>
-                    <Col md = {2}>
-                        <DropdownButton title="Shape" id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({shape: event}); this.forceUpdate()}}>
+                        <DropdownButton title= {this.state.shape} id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({shape: event}); this.forceUpdate()}}>
                             <MenuItem eventKey="square"> Square </MenuItem> 
                             <MenuItem eventKey="circle"> Circle </MenuItem>
                         </DropdownButton>
                     </Col>
+                    {this.state.shape == "circle"? 
+                        <Col md = {2}>
+                        <Button block bsSize = "large" onClick = { () => this.setState({changeCircleGrid : !this.state.changeCircleGrid})}> Change grid </Button>
+                        </Col> :
+                        <Col md = {2}>
+                        </Col>
+                    }
+                    
+                    
                     <Col style = {{height: "20px"}}  md = {2}>
                         <FormGroup>
-                            <Button block bsSize = "large" onClick = {() => this.onToggle()} checked = {this.state.toggleActive}>
+                            <Button block bsSize = "large" onClick = {() => this.onToggle()} >
                             { "Grid " + (this.state.toggleActive? "on" : "off")}
                             </Button>
                         </FormGroup>

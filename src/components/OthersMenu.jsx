@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Col, Row, Table, Button, DropdownButton ,MenuItem} from 'react-bootstrap';
+import {Col, Row, Table, Button, DropdownButton ,MenuItem, Modal,FormControl} from 'react-bootstrap';
 import axios from 'axios';
 import {ReactSVGPanZoom} from 'react-svg-pan-zoom';
 import Cell from './Cell.jsx';
@@ -19,14 +19,13 @@ export default class OthersMenu extends Component {
             selectedPattern : "",
             colorList : [],
             showColorModal : false,
-            selectedColor : null
+            selectedColor : null,
+            showBrowseColor : false
         }
         this.Viewer = null;
         this.setNewData = this.setNewData.bind(this);
         this.removePattern = this.removePattern.bind(this);
-        this.createColorHandler = this.createColorHandler.bind(this);
-        this.addColorHandler = this.addColorHandler.bind(this);
-  
+
     }
     
     setNewData(data){
@@ -71,33 +70,11 @@ export default class OthersMenu extends Component {
             console.log("error with :  " + error);
         })
         
-
-        axios.post('http://localhost:3616/getColor', {
-            
-        }).then( (temp) => {
-           var data = temp.data;
-           this.setState({colorList: data})
-        }).catch((error) => {
-            console.log("error get color : " + error);
-        });
-
-        
     }
 
-    createColorHandler(colorList){
-        axios.post('http://localhost:3616/createColor',{
-            "colorList" : colorList
-        }).catch((error) => {
-            console.log("error with create color : " + error);
-        });
-    }
+    
 
-    addColorHandler(color){
-        axios.post('http://localhost:3616/createColor', {
-            "name" : color.name,
-            "value" : color.value
-        })
-    }
+    
 
     render(){
 
@@ -156,9 +133,7 @@ export default class OthersMenu extends Component {
                     </svg>
                 </ReactSVGPanZoom>);
         
-        const colorList = this.state.colorList.map( (val) => {
-            <MenuItem eventKey = {val.name} > {val.name} </MenuItem> 
-        });
+        
         
         var val = (<div className = "container">
                 <Row>
@@ -184,11 +159,9 @@ export default class OthersMenu extends Component {
                     }
                     </Col>
                     <Col md = {2}>
-                    {!this.state.isHistory? 
-                        <DropdownButton title="Shape" id="bg-nested-dropdown" bsSize = "large" onSelect={(event) => {this.setState({showColorModal: true, selectedColor : event}); this.forceUpdate()}}>
-                           {colorList}
-                        </DropdownButton>
-                    : <div></div>}
+                    {!this.state.isHistory?
+                    <Button bsSize = "large" onClick = {() => this.setState({showBrowseColor : true})}> Browse Colors </Button>
+                    :<div></div>}
                     </Col>
                     {!this.state.isHistory?
                     <Col md = {2}>
@@ -225,7 +198,130 @@ export default class OthersMenu extends Component {
         return(
             <div>
                 {val}
+                <BrowseColorModal colorList = {this.props.colorList} show = {this.state.showBrowseColor} onHide = { () => this.setState({showBrowseColor : false}) }/>
             </div>
         );
+    }
+}
+
+
+class BrowseColorModal extends Component {
+    constructor(props){
+        super(props);
+        this.state = {
+           colorList : [],
+           red : "",
+           green: "",
+           blue : "",
+           isSaving : false,
+           name : ""
+        }
+        this.saveColorHandler = this.saveColorHandler.bind(this);
+    }
+
+    saveColorHandler(){
+        console.log('hello');
+        if (this.state.name == ""){
+            return;
+        }
+        axios.post("http://localhost:3616/createColor", 
+            { name : this.state.name , colorList : this.state.colorList}
+        ).catch( (error) => { console.log(error)} );
+        this.setState({red : "", green : "", blue : "", isSaving : false, name : "", colorList : []});
+        this.props.onHide();
+
+    }
+
+    render(){
+        console.log("check : ");
+        console.log(this.state.colorList);
+        const colorRenderList = this.state.colorList.map( (val) => (<div onClick = {() => {
+            var temp = this.state.colorList;
+            temp.splice(val,1);        
+            this.forceUpdate();  
+        }} className = "middle-square" style = {{background : val.value, display: "inline-block"}}>  </div>))
+        return(
+            <Modal show={this.props.show} onHide={this.props.onHide}>
+                <Modal.Header closeButton>
+                    <Modal.Title> Browse Colors </Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                   
+                    <Row style = {{marginLeft : "0.5vh", marginRight : "0.5vh"}}>
+                        {colorRenderList}
+                    </Row>
+                    
+                    
+                      {this.state.isSaving? 
+                      <Row>
+                        <Col md = {3}>
+                            <h4> Shade Name </h4> 
+                        </Col>
+                        <Col md = {9}>
+                            <FormControl value = {this.state.name} type = "text" placeholder = "shade name" onChange = { (e) => this.setState({name : e.target.value})}/>
+                        </Col>
+                       
+                      </Row>:
+                      <Row >
+                          <Col md = {4}>
+                            <h4> Red </h4>
+                            <FormControl style = {{width : "10vh"}} value = {this.state.red} type="text" placeholder="" onChange = { (e) => this.setState({red : e.target.value}) }/>
+                            </Col>
+                            <Col md = {4}>
+                                <h4> Green </h4>
+                                <FormControl style = {{width : "10vh"}} value = {this.state.green} type="text" placeholder="" onChange = { (e) => this.setState({green : e.target.value}) }/>
+                            </Col>
+                            <Col md = {4}>
+                                <h4> Blue </h4>
+                                <FormControl style = {{width : "10vh"}} value = {this.state.blue} type="text" placeholder="" onChange = { (e) => this.setState({blue : e.target.value}) }/>
+                            </Col>
+                      </Row>  
+                      }
+                      
+                   
+                    {this.state.isSaving?
+                    <Row style = {{marginTop : "2vh"}}>
+                        <Col md = {8}>
+                        </Col>
+                        <Col md = {2}>
+                            <Button onClick = { () => this.setState({isSaving : false})} > Cancel </Button>
+                        </Col>
+                        <Col md = {2}>
+                            <Button bsStyle = "primary" onClick = { () => this.saveColorHandler() } > Save </Button>
+                        </Col>
+                    </Row>
+                         : 
+                    <Row style = {{marginTop : "2vh"}}>
+                        <Col md = {8}>
+
+                        </Col>
+                        
+                        <Col md = {2}>
+                            <Button bsStyle = "danger" onClick = { () => {
+                                this.setState({isSaving : true})
+                            }}> Save </Button>
+                        </Col>
+                        <Col md = {2}>
+                            <Button style = {{marginLeft : "-4vh"}} bsStyle = "primary" onClick = {() => {
+                                if (parseInt(this.state.red) > 255){
+                                    this.setState( {red : ""});
+                                } else if (parseInt(this.state.green) > 255){
+                                    this.setState( {green : ""});
+                                } else if (parseInt(this.state.blue) > 255){
+                                    this.setState( {blue : ""});
+                                } else {
+                                    var temp = this.state.colorList;
+                                    temp.push({id : this.state.colorList.length + 1, value : "rgb(" + this.state.red + "," + this.state.green + "," + this.state.blue + ")"})
+                                    this.setState( {red : "", green :  "", blue : ""});
+                                
+                                    this.forceUpdate();
+                                }
+                                }}> Add Color </Button>
+                        </Col>
+                    </Row>}
+                    
+                </Modal.Body>
+            </Modal>
+        );  
     }
 }

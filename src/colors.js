@@ -1,23 +1,25 @@
-
-
-
-
+import axios from 'axios';
 
 module.exports = {
     getList : function(){
         return ['red','brown','custom1','custom2','custom3','custom4','custom5'];
     },
     getColor : function(color){
+        console.log("invoked!");
+        
+    },
+    trumpCard : function(color){
         var temp = [];
+        var name = color;
         if (color == 'red'){
-            
+        
             var counter = 0;
             for (var i = 187 ; i < 255 ; i += 3){
                
                 temp.push({ id : counter , value : "rgb(" + i + ",0,0)"});
                 counter++;
             }
-            return temp;
+            
         } else if (color == 'brown'){
             
             var counter = 0;
@@ -26,7 +28,7 @@ module.exports = {
                 counter++;
             }
             temp.reverse();
-            return temp;
+          
         } else if (color == "custom1"){
             temp.push({id : 0 , value : "rgb(210,161,155)"});
             temp.push({id : 1 , value : "rgb(208, 158, 150)"});
@@ -54,7 +56,7 @@ module.exports = {
 
             temp.push({id : 20 , value : "rgb(167, 166, 89)"});
             temp.push({id : 21 , value : "rgb(162, 166, 88)"});
-            return temp;
+         
         } else if (color == 'custom2'){
             temp.push({id : 0 , value : "rgb(179,174,92)"});
             temp.push({id : 1 , value : "rgb(170,173,93)"});
@@ -85,7 +87,7 @@ module.exports = {
             temp.push({id : 21 , value : "rgb(137,183,183)"});
             temp.push({id : 22 , value : "rgb(127,182,183)"});     
 
-            return temp; 
+            
         }
         else if (color == "custom3"){
             temp.push({id : 0 , value : "rgb(148,201,200)"});
@@ -117,7 +119,7 @@ module.exports = {
             temp.push({id : 21 , value : "rgb(169,182,219)"});
             temp.push({id : 22 , value : "rgb(173,178,217)"});  
 
-           return temp;
+           
             
         } else if (color == "custom4"){
 
@@ -150,7 +152,7 @@ module.exports = {
             temp.push({id : 21 , value : "rgb(208,156,158)"});
             temp.push({id : 22 , value : "rgb(209,161,159)"});  
 
-            return temp;
+       
 
         } else if (color == "custom5"){
             temp.push({id : 1 , value : "rgb(210,161,155)"});
@@ -277,9 +279,11 @@ module.exports = {
             temp.push({id : 90 , value : "rgb(208,156,158)"});
             temp.push({id : 91 , value : "rgb(209,161,159)"});  
 
-            return temp;
-
         }
+
+        axios.post("/createColor", {name : name, colorList : temp}).catch( function(error){
+                console.log("error create color : " + error);
+        });
           
     }
 

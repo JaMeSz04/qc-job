@@ -15,7 +15,7 @@ export default class Game extends Component {
             second : 0,
             isSubmitted : false,
             colorList : [],
-            defaultColorList : colors.getColor(this.props.color),
+            defaultColorList : this.props.color,
             finalResult : [],
             score : 0,
             fullScore : 0,

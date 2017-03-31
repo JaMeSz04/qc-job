@@ -169,7 +169,8 @@ class SelectModal extends Component {
             pickerName : "Pattern List",
             timeText : "",
             selectedShape : "Shape",
-            selectMini : null
+            selectMini : null,
+            colorList : []
         }
         this.changeDropDown = this.changeDropDown.bind(this);
     }
@@ -179,18 +180,57 @@ class SelectModal extends Component {
        
     }
 
+    componentDidMount(){
+        
+        axios.post("http://localhost:3616/getColor", {} ).then(function(data) {
+            console.log("invoke");
+            var val = data.data;
+     
+            this.setState({colorList: val});
+            this.forceUpdate();
+        }.bind(this)).catch(function (error){
+            console.log("error get color: " + error);
+        });
+        
+       
+    }
+
     render(){ 
         
-        const colorList = this.props.colorSelect.map( (value) => { 
-            var colortemp = colors.getColor(value)[0].value;
+        var nameList = []
+      
+        for (var i =0  ; i < this.state.colorList.length ; i++){
+            
+            if (nameList.indexOf(this.state.colorList[i].name) == -1){
+                nameList.push(this.state.colorList[i].name);
+            }
+        }
+
+        console.log(nameList.length);
+
+        const colorList = nameList.map( (value) => { 
+
+            
+            
+
+            var tempColorList = [];
+     
+            for (var i = 0 ; i < this.state.colorList.length ; i++){
+                
+                if (this.state.colorList[i].name == value){
+                    tempColorList.push(this.state.colorList[i]);
+                }
+            }
             
             var style = {
-                background : colortemp
+                background : tempColorList[0].value
             }
-            const colorPick = colors.getColor(value).map( (c) => (<div className = "mini-square" style = {{background : c.value, display : "inline-block"}}>  </div>) );
+
+            
+            const colorPick = tempColorList.map( (c) => (<div className = "mini-square" style = {{background : c.value, display : "inline-block"}}>  </div>) );
             return ( <Col md = {1}> 
                         <OverlayTrigger delay = {500} placement="top" overlay={ <Popover id="popover-positioned-top" title={value}> {colorPick} </Popover> }> 
-                        <div style = {style} className = "square" onClick = { () => this.setState( {selectedColor : value, selectMini : colors.getColor(value)[0].value} ) } >  </div>
+                        <div style = {style} className = "square" onClick = { () => this.setState( {selectedColor : tempColorList, selectMini : tempColorList[0].value }) } >  </div>
                         </OverlayTrigger>
                     </Col>);
         })

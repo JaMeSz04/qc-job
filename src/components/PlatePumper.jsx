@@ -48,7 +48,7 @@ export default class PlatePumper extends Component {
 
     } else if (this.state.shape == "circle" && this.state.changeCircleGrid){
         var newX = (event.x - (event.x % 60) + 31);
-        var newY = (event.y - (event.y % 60) - 7);
+        var newY = (event.y - (event.y % 60) - 1);
     }
    
 

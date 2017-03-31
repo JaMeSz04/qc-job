@@ -32,8 +32,6 @@
 	
 }
 
-
-
 .circleF:focus{
 	opacity : 0.3;
 	background : black;
@@ -54,6 +52,12 @@
     height : 10px;
 	border: 1px solid black;
 
+}
+
+.middle-square{
+	width : 20px;
+	height : 20px;
+	border : 1px solid black;
 }
 
 
